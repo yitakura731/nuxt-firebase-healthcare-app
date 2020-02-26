@@ -1,42 +1,34 @@
 export const state = () => ({
-  hitWords: null
+  hitWords: null,
+  labels: null,
+  objects: null
 });
 
 export const mutations = {
   hitWords(state, hitWords) {
     state.hitWords = hitWords;
+  },
+  objects(state, objects) {
+    state.objects = objects;
+  },
+  labels(state, labels) {
+    state.labels = labels;
   }
 };
 
 export const getters = {
   hitWords: state => {
     return state.hitWords;
+  },
+  objects: state => {
+    return state.objects;
+  },
+  labels: state => {
+    return state.labels;
   }
 };
 
 export const actions = {
-  classfyKeywords(context, keywords) {
-    const retVal = {
-      validWords: [],
-      inValidWords: []
-    };
-    // OCRの抽出結果を矩形面積順にソートし、結果として返す
-    const tmp = keywords.sort((left, right) => {
-      if (left.square === right.square) {
-        return 0;
-      } else {
-        return right.square > left.square ? 1 : -1;
-      }
-    });
-    for (let index = 0; index < tmp.length; index++) {
-      if (index < 2) {
-        retVal.validWords.push(tmp[index]);
-      } else {
-        retVal.inValidWords.push(tmp[index]);
-      }
-    }
-    return retVal;
-  },
   async getRakutenWebSite(context, keywords) {
     let query = '';
     keywords.forEach(keyword => {
@@ -62,7 +54,7 @@ export const actions = {
     });
     return retVal;
   },
-  execGoogleOCR(context, imageData) {
+  execGoogleVisionApi(context, imageData) {
     const data = {
       requests: [
         {
@@ -73,6 +65,14 @@ export const actions = {
             {
               type: 'TEXT_DETECTION',
               maxResults: '1'
+            },
+            {
+              type: 'OBJECT_LOCALIZATION',
+              maxResults: '1'
+            },
+            {
+              type: 'LABEL_DETECTION',
+              maxResults: '10'
             }
           ],
           imageContext: {

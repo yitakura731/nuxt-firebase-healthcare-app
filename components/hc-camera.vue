@@ -8,7 +8,7 @@
     </div>
     <div class="mt-3 d-flex">
       <b-button class="bg-success border-0 hc-button mr-1" @click="capture()">
-        これ飲みたい！
+        これ食べた！
       </b-button>
       <b-button class="bg-secoundary border-0 hc-button ml-1" @click="reset()">
         もう一度！
@@ -55,58 +55,127 @@ export default {
       const imgData = this.canvas.toDataURL('image/webp').split(',')[1];
       this.$store.commit('webapi/hitWords', null);
       this.$store
-        .dispatch('webapi/execGoogleOCR', imgData)
-        .then(ocrResult => {
-          const tmpWords = [];
-          if (ocrResult.responses[0].textAnnotations != null) {
-            // OCRの結果を描画
-            const ocrs = ocrResult.responses[0].textAnnotations;
-            ctx.strokeStyle = 'Green';
-            ctx.lineWidth = 3;
-            for (let index = 1; index < ocrs.length; index++) {
-              // 各OCR結果の矩形を描画
-              const vertices = ocrs[index].boundingPoly.vertices;
-              for (let index2 = 0; index2 < 4; index2++) {
-                ctx.beginPath();
-                ctx.moveTo(vertices[index2].x, vertices[index2].y);
-                if (index2 + 1 !== 4) {
-                  ctx.lineTo(vertices[index2 + 1].x, vertices[index2 + 1].y);
-                } else {
-                  ctx.lineTo(vertices[0].x, vertices[0].y);
-                }
-                ctx.stroke();
-              }
-              tmpWords.push({
-                index: index,
-                text: ocrs[index].description,
-                square: this.getSquare(vertices)
-              });
-            }
+        .dispatch('webapi/execGoogleVisionApi', imgData)
+        .then(apiResp => {
+          const retVal = {};
+          // Localized object detection
+          if (apiResp.responses[0].localizedObjectAnnotations != null) {
+            retVal.objectlResult = this.parseObjectLocalization(
+              apiResp.responses[0].localizedObjectAnnotations,
+              this.canvas
+            );
+          } else {
+            retVal.labelResult = [];
           }
-          return this.$store.dispatch('webapi/classfyKeywords', tmpWords);
-        })
-        .then(classifiedWords => {
-          this.$store.commit('webapi/hitWords', classifiedWords);
+          // Label Detection
+          if (apiResp.responses[0].labelAnnotations != null) {
+            retVal.labelResult = this.parseLabelAnnotation(
+              apiResp.responses[0].labelAnnotations
+            );
+          } else {
+            retVal.labelResult = [];
+          }
+          // Text Detection
+          if (apiResp.responses[0].textAnnotations != null) {
+            retVal.ocrResult = this.parseTextAnnotation(
+              apiResp.responses[0].textAnnotations,
+              this.canvas
+            );
+          } else {
+            retVal.ocrResult = {
+              validWords: [],
+              inValidWords: []
+            };
+          }
+          this.$store.commit('webapi/hitWords', retVal.ocrResult);
+          this.$store.commit('webapi/labels', retVal.labelResult);
+          this.$store.commit('webapi/objects', retVal.objectlResult);
         })
         .catch(err => {
           this.error = err;
         });
     },
-    getSquare(vertices) {
-      // 4点の座標から面積を取得
-      let retVal = 0;
-      for (let index = 0; index < 4; index++) {
-        if (index + 1 !== 4) {
-          const x = vertices[index + 1].x - vertices[index].x;
-          const y = vertices[index + 1].y + vertices[index].y;
-          retVal += x * y;
+    parseObjectLocalization(response, canvas) {
+      const retVal = [];
+      const ctx = canvas.getContext('2d');
+      ctx.strokeStyle = 'Orange';
+      ctx.lineWidth = 3;
+      for (let index = 0; index < response.length; index++) {
+        const vertices = response[index].boundingPoly.normalizedVertices;
+        for (let index2 = 0; index2 < 4; index2++) {
+          ctx.beginPath();
+          ctx.moveTo(
+            vertices[index2].x * canvas.width,
+            vertices[index2].y * canvas.height
+          );
+          if (index2 + 1 !== 4) {
+            ctx.lineTo(
+              vertices[index2 + 1].x * canvas.width,
+              vertices[index2 + 1].y * canvas.height
+            );
+          } else {
+            ctx.lineTo(
+              vertices[0].x * canvas.width,
+              vertices[0].y * canvas.height
+            );
+          }
+          ctx.stroke();
+        }
+        retVal.push({
+          id: response[index].mid,
+          name: response[index].name,
+          score: response[index].score
+        });
+      }
+      return retVal;
+    },
+    parseLabelAnnotation(response) {
+      const retVal = [];
+      response.forEach(elem => {
+        retVal.push({
+          id: elem.mid,
+          name: elem.description,
+          score: elem.score
+        });
+      });
+      return retVal;
+    },
+    parseTextAnnotation(response, canvas) {
+      const retVal = {
+        validWords: [],
+        inValidWords: []
+      };
+      const ctx = canvas.getContext('2d');
+      for (let index = 1; index < response.length; index++) {
+        const description = response[index].description;
+        const vertices = response[index].boundingPoly.vertices;
+        if (description.includes('kcal')) {
+          ctx.strokeStyle = 'Green';
+          ctx.lineWidth = 4;
+          retVal.validWords.push({
+            index: index,
+            text: description
+          });
+          for (let index2 = 0; index2 < 4; index2++) {
+            ctx.beginPath();
+            ctx.moveTo(vertices[index2].x, vertices[index2].y);
+            if (index2 + 1 !== 4) {
+              ctx.lineTo(vertices[index2 + 1].x, vertices[index2 + 1].y);
+            } else {
+              ctx.lineTo(vertices[0].x, vertices[0].y);
+            }
+            ctx.stroke();
+          }
         } else {
-          const x = vertices[0].x - vertices[index].x;
-          const y = vertices[0].y + vertices[index].y;
-          retVal += x * y;
+          ctx.strokeStyle = '#777';
+          ctx.lineWidth = 1;
+          retVal.inValidWords.push({
+            index: index,
+            text: description
+          });
         }
       }
-      return Math.abs(retVal);
+      return retVal;
     }
   }
 };

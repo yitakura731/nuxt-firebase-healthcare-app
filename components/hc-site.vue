@@ -1,24 +1,14 @@
 <template>
   <div v-if="hitwords != null" class="p-2">
     <div v-if="hitwords.validWords.length > 0">
-      キーワード：
-      <div class="w-100 d-flex font-weight-bold text-info ml-2">
-        <span> {{ validHitwords }} </span>
-      </div>
-      <div class="w-100 d-flex font-weight-bold text-secoundary ml-2">
-        <span> {{ inValidHitwords }} </span>
-      </div>
-      <div v-if="sakeSites.length > 0">
-        <div v-for="(sakeSite, index) in sakeSites" :key="sakeSite.index">
-          <hc-site-item :site="sakeSite" :index="index" />
+      <div v-if="sites.length > 0">
+        <div v-for="(site, index) in sites" :key="site.index">
+          <hc-site-item :site="site" :index="index" />
         </div>
       </div>
-      <div v-if="sakeSites.length === 0" class="my-2 text-center">
+      <div v-if="sites.length === 0" class="my-2 text-center">
         キーワードの商品がヒットしませんでした
       </div>
-    </div>
-    <div v-if="hitwords.validWords.length == 0" class="my-2 text-center">
-      キーワードを検出できませんでした
     </div>
     <b-alert variant="warning" :show="error != null" class="text-center">
       {{ error }}
@@ -35,31 +25,13 @@ export default {
   },
   data() {
     return {
-      sakeSites: [],
+      sites: [],
       error: null
     };
   },
   computed: {
     hitwords() {
       return this.$store.state.webapi.hitWords;
-    },
-    validHitwords() {
-      let retVal = '';
-      if (this.hitwords != null && this.hitwords.validWords != null) {
-        this.hitwords.validWords.forEach(elem => {
-          retVal += elem.text + ' ';
-        });
-      }
-      return retVal;
-    },
-    inValidHitwords() {
-      let retVal = '';
-      if (this.hitwords != null && this.hitwords.inValidWords != null) {
-        this.hitwords.inValidWords.forEach(elem => {
-          retVal += elem.text + ' ';
-        });
-      }
-      return retVal;
     }
   },
   watch: {
@@ -76,8 +48,8 @@ export default {
         });
         this.$store
           .dispatch('webapi/getRakutenWebSite', query)
-          .then(sakeSites => {
-            this.sakeSites = sakeSites;
+          .then(sites => {
+            this.sites = sites;
           })
           .catch(err => {
             if (
@@ -91,7 +63,7 @@ export default {
             }
           });
       } else {
-        this.sakeSites = [];
+        this.sites = [];
       }
     }
   }
