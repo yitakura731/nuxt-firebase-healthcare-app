@@ -1,0 +1,11 @@
+{
+    "name": "Healthcare demo application",
+    "short_name": "HC Demo App",
+    "icons": [{
+          "src": "icon.png",
+          "sizes": "64x64",
+          "type": "image/png"
+        }],
+    "start_url": "/",
+    "display": "standalone"
+}

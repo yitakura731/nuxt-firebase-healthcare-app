@@ -167,8 +167,6 @@ export default {
             ctx.stroke();
           }
         } else {
-          ctx.strokeStyle = '#777';
-          ctx.lineWidth = 1;
           retVal.inValidWords.push({
             index: index,
             text: description

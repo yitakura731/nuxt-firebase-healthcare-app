@@ -39,7 +39,24 @@ module.exports = {
   /*
   ** Plugins to load before mounting the App
   */
-  plugins: [],
+  plugins: [{ src: '~/plugins/pwa-setup', ssr: false }],
+
+  fontawesome: {
+    imports: [
+      {
+        set: '@fortawesome/free-solid-svg-icons',
+        icons: ['fas']
+      },
+      {
+        set: '@fortawesome/free-regular-svg-icons',
+        icons: ['far']
+      },
+      {
+        set: '@fortawesome/free-brands-svg-icons',
+        icons: ['fab']
+      }
+    ]
+  },
 
   /*
   ** Nuxt.js modules
@@ -48,7 +65,8 @@ module.exports = {
     '@nuxtjs/axios',
     'bootstrap-vue/nuxt',
     '@nuxtjs/pwa',
-    ['@nuxtjs/dotenv', { filename: './app.env' }]
+    ['@nuxtjs/dotenv', { filename: './app.env' }],
+    'nuxt-fontawesome'
   ],
 
   env: {
