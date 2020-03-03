@@ -1,7 +1,7 @@
 <template>
   <div class="py-2 d-flex flex-column align-items-center">
     <div class="hc-camera-root d-flex flex-column align-items-center">
-      <video ref="video" class="hc-video" autoplay />
+      <video ref="video" class="hc-video" autoplay playsinline />
       <div v-show="captured">
         <canvas ref="canvas" height="340px" width="340px" class="hc-canvas" />
       </div>
