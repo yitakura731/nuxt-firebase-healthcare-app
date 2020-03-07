@@ -1,9 +1,9 @@
 <template>
-  <div v-if="hitwords != null" class="px-1">
+  <div v-if="visionResp != null" class="px-1">
     <div class="d-flex p-1 mb-2">
       <div class="flex-grow-1 border rounded bg-white text-info p-1">
         <h1 class="text-center mb-0">
-          {{ calorie }}
+          {{ carolie }}
         </h1>
       </div>
       <span class="ml-1 mr-2 d-flex align-items-end">
@@ -15,10 +15,10 @@
     </div>
     <hr>
     <b-collapse id="collapse-1">
-      <div v-if="objects.length != null && objects.length > 0">
+      <div v-if="visionResp.objects.length > 0">
         <a class="font-weight-bolder ml-2">物体検知</a>
         <div
-          v-for="object in objects"
+          v-for="object in visionResp.objects"
           :key="object.id" 
           class="border rounded bg-light p-2 mx-1 mt-1 mb-3"
         >
@@ -29,20 +29,23 @@
         <a class="font-weight-bolder ml-2">物体が見つかりません</a>
       </div>
       <a class="font-weight-bolder ml-2">ラベリング</a>
-      <div v-if="labels.length != null && labels.length > 0">
+      <div v-if="visionResp.labels.length > 0">
         <hc-chart
           :data="getDatasets()"
           class="border rounded bg-light mx-1 mt-1 mb-3"
         />
       </div>
       <div v-else class="border rounded bg-light m-1 mb-3">
-        <div class="font-weight-bolder ml-1 p-2">
+        <div class="ml-1 p-2">
           検知できません
         </div>
       </div>
       <a class="font-weight-bolder ml-2">テキスト抽出</a>
       <div class="border rounded bg-light m-1 p-2">
-        <div v-if="hitwords.validWords.length > 0">
+        <div
+          v-if="visionResp.hitwords.validWords.length > 0 || 
+            visionResp.hitwords.inValidWords.length > 0"
+        >
           <a class="font-weight-bolder ml-2">有効テキスト</a>
           <div class="border rounded bg-white text-info p-2 mb-2">
             {{ validHitwords }}
@@ -73,23 +76,18 @@ export default {
   },
   data() {
     return {
+      carolie: null,
       error: null
     };
   },
   computed: {
-    labels() {
-      return this.$store.state.webapi.labels;
-    },
-    objects() {
-      return this.$store.state.webapi.objects;
-    },
-    hitwords() {
-      return this.$store.state.webapi.hitWords;
+    visionResp() {
+      return this.$store.state.webapi.visionResp;
     },
     validHitwords() {
       let retVal = '';
-      if (this.hitwords != null && this.hitwords.validWords != null) {
-        this.hitwords.validWords.forEach(elem => {
+      if (this.visionResp.hitwords.validWords.length > 0) {
+        this.visionResp.hitwords.validWords.forEach(elem => {
           retVal += elem.text + ' ';
         });
       }
@@ -97,34 +95,57 @@ export default {
     },
     inValidHitwords() {
       let retVal = '';
-      if (this.hitwords != null && this.hitwords.inValidWords != null) {
-        this.hitwords.inValidWords.forEach(elem => {
+      if (this.visionResp.hitwords.inValidWords != null) {
+        this.visionResp.hitwords.inValidWords.forEach(elem => {
           retVal += elem.text + ' ';
         });
       }
       return retVal;
-    },
-    calorie() {
-      let retVal = '0';
-      if (
-        this.hitwords != null &&
-        this.hitwords.validWords != null &&
-        this.hitwords.validWords.length > 0
-      ) {
-        retVal = this.hitwords.validWords[0].text;
-        retVal = retVal.replace('kcal', '');
+    }
+  },
+  watch: {
+    visionResp(newVal, oldVal) {
+      this.carolie = null;
+      if (newVal != null) {
+        if (newVal.hitwords.validWords.length > 0) {
+          this.carolie = newVal.hitwords.validWords[0].text.replace('kcal', '');
+        } else {
+          let keyword = '';
+          if (newVal.objects.length > 0) {
+            keyword = newVal.objects[0].name;
+          }
+          this.$store
+            .dispatch('webapi/getCalorie', keyword)
+            .then(response => {
+              if (response.data.length > 0) {
+                this.carolie = response.data[0].energ_kcal;
+              } else {
+                this.carolie = 'N/A';
+              }
+            })
+            .catch(err => {
+              if (
+                err.response != null &&
+                err.response.data != null &&
+                err.response.data.error != null
+              ) {
+                this.error = 'Carolie API Error : ' + err.response.data.error;
+              } else {
+                this.error = err;
+              }
+            });
+        }
       }
-      return retVal;
     }
   },
   methods: {
     getDatasets() {
       return {
-        labels: this.labels.map(elem => elem.name),
+        labels: this.visionResp.labels.map(elem => elem.name),
         datasets: [
           {
             label: 'Bar Dataset',
-            data: this.labels.map(elem => elem.score),
+            data: this.visionResp.labels.map(elem => elem.score),
             backgroundColor: 'rgba(75,192,192,0.4)'
           }
         ]

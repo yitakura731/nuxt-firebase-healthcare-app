@@ -44,7 +44,7 @@ export default {
   },
   methods: {
     reset() {
-      this.$store.commit('webapi/hitWords', null);
+      this.$store.commit('webapi/visionResp', null);
       this.captured = false;
     },
     capture() {
@@ -53,43 +53,41 @@ export default {
       const ctx = this.canvas.getContext('2d');
       ctx.drawImage(this.video, 0, 0, 340, 340);
       const imgData = this.canvas.toDataURL('image/webp').split(',')[1];
-      this.$store.commit('webapi/hitWords', null);
+      this.$store.commit('webapi/visionResp', null);
       this.$store
         .dispatch('webapi/execGoogleVisionApi', imgData)
         .then(apiResp => {
           const retVal = {};
           // Localized object detection
           if (apiResp.responses[0].localizedObjectAnnotations != null) {
-            retVal.objectlResult = this.parseObjectLocalization(
+            retVal.objects = this.parseObjectLocalization(
               apiResp.responses[0].localizedObjectAnnotations,
               this.canvas
             );
           } else {
-            retVal.labelResult = [];
+            retVal.objects = [];
           }
           // Label Detection
           if (apiResp.responses[0].labelAnnotations != null) {
-            retVal.labelResult = this.parseLabelAnnotation(
+            retVal.labels = this.parseLabelAnnotation(
               apiResp.responses[0].labelAnnotations
             );
           } else {
-            retVal.labelResult = [];
+            retVal.labels = [];
           }
           // Text Detection
           if (apiResp.responses[0].textAnnotations != null) {
-            retVal.ocrResult = this.parseTextAnnotation(
+            retVal.hitwords = this.parseTextAnnotation(
               apiResp.responses[0].textAnnotations,
               this.canvas
             );
           } else {
-            retVal.ocrResult = {
+            retVal.hitwords = {
               validWords: [],
               inValidWords: []
             };
           }
-          this.$store.commit('webapi/hitWords', retVal.ocrResult);
-          this.$store.commit('webapi/labels', retVal.labelResult);
-          this.$store.commit('webapi/objects', retVal.objectlResult);
+          this.$store.commit('webapi/visionResp', retVal);
         })
         .catch(err => {
           this.error = err;

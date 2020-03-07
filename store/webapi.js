@@ -1,38 +1,38 @@
 export const state = () => ({
-  hitWords: null,
-  labels: null,
-  objects: null
+  visionResp: null
 });
 
 export const mutations = {
-  hitWords(state, hitWords) {
-    state.hitWords = hitWords;
-  },
-  objects(state, objects) {
-    state.objects = objects;
-  },
-  labels(state, labels) {
-    state.labels = labels;
+  visionResp(state, visionResp) {
+    state.visionResp = visionResp;
   }
 };
 
 export const getters = {
-  hitWords: state => {
-    return state.hitWords;
-  },
-  objects: state => {
-    return state.objects;
-  },
-  labels: state => {
-    return state.labels;
+  visionResp: state => {
+    return state.visionResp;
   }
 };
 
 export const actions = {
+  getCalorie(context, keyword) {
+    return this.$axios({
+      method: 'GET',
+      url: `${process.env.CALORIE_API_URL}`,
+      headers: {
+        'content-type': 'application/octet-stream',
+        'x-rapidapi-host': `${process.env.CALORIE_API_HOST}`,
+        'x-rapidapi-key': `${process.env.CALORIE_API_SECRET}`
+      },
+      params: {
+        keyword
+      }
+    });
+  },
   async getRakutenWebSite(context, keywords) {
     let query = '';
     keywords.forEach(keyword => {
-      query += keyword.text + ' ';
+      query += keyword + ' ';
     });
     const retVal = [];
     const generId = 100938;
