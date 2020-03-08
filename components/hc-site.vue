@@ -1,16 +1,19 @@
 <template>
   <div v-if="visionResp != null" class="p-2">
-    <div v-if="sites.length > 0">
-      <div v-for="(site, index) in sites" :key="site.index">
-        <hc-site-item :site="site" :index="index" />
+    <b-collapse id="collapse-rakuten">
+      <hr class="mt-0">
+      <div v-if="sites.length > 0">
+        <div v-for="(site, index) in sites" :key="site.index">
+          <hc-site-item :site="site" :index="index" />
+        </div>
       </div>
-    </div>
-    <div v-if="sites.length === 0" class="my-2 text-center">
-      キーワードの商品がヒットしませんでした
-    </div>
-    <b-alert variant="warning" :show="error != null" class="text-center">
-      {{ error }}
-    </b-alert>
+      <div v-if="sites.length === 0" class="my-2 text-center">
+        キーワードの商品がヒットしませんでした
+      </div>
+      <b-alert variant="warning" :show="error != null" class="text-center">
+        {{ error }}
+      </b-alert>
+    </b-collapse>
   </div>
 </template>>
 

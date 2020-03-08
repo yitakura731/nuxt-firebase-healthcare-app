@@ -1,16 +1,23 @@
 export const state = () => ({
-  visionResp: null
+  visionResp: null,
+  calorie: null
 });
 
 export const mutations = {
   visionResp(state, visionResp) {
     state.visionResp = visionResp;
+  },
+  calorie(state, calorie) {
+    state.calorie = calorie;
   }
 };
 
 export const getters = {
   visionResp: state => {
     return state.visionResp;
+  },
+  calorie: state => {
+    return state.calorie;
   }
 };
 

@@ -39,7 +39,10 @@ module.exports = {
   /*
   ** Plugins to load before mounting the App
   */
-  plugins: [{ src: '~/plugins/pwa-setup', ssr: false }],
+  plugins: [
+    { src: '~/plugins/pwa-setup', ssr: false },
+    { src: '~/plugins/vue2-google-maps.js', ssr: true }
+  ],
 
   fontawesome: {
     imports: [
@@ -76,6 +79,8 @@ module.exports = {
     RAKUTEN_SHOP_SECRET: process.env.RAKUTEN_SHOP_SECRET
   },
 
+  vendor: ['vue2-google-maps'],
+
   /*
   ** Build configuration
   */
@@ -83,6 +88,7 @@ module.exports = {
     /*
     ** You can extend webpack config here
     */
+    transpile: [/^vue2-google-maps($|\/)/],
     extend(config, ctx) {
       // Run ESLint on save
       if (ctx.isDev && ctx.isClient) {

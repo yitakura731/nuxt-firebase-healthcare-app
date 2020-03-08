@@ -8,6 +8,7 @@
     </div>
     <div class="mt-3 d-flex">
       <b-button class="bg-success border-0 hc-button mr-1" @click="capture()">
+        <font-awesome-icon :icon="['fas', 'utensils']" />
         これ食べた！
       </b-button>
       <b-button class="bg-secoundary border-0 hc-button ml-1" @click="reset()">
@@ -45,6 +46,7 @@ export default {
   methods: {
     reset() {
       this.$store.commit('webapi/visionResp', null);
+      this.$store.commit('webapi/calorie', null);
       this.captured = false;
     },
     capture() {

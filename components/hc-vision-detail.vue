@@ -1,20 +1,7 @@
 <template>
   <div v-if="visionResp != null" class="px-1">
-    <div class="d-flex p-1 mb-2">
-      <div class="flex-grow-1 border rounded bg-white text-info p-1">
-        <h1 class="text-center mb-0">
-          {{ carolie }}
-        </h1>
-      </div>
-      <span class="ml-1 mr-2 d-flex align-items-end">
-        <h3 class="mb-0">kcal</h3>
-      </span>
-      <b-button v-b-toggle.collapse-1 variant="info" class="ml-2 mt-4 mr-1">
-        <font-awesome-icon :icon="['fas', 'glasses']" />
-      </b-button>
-    </div>
-    <hr>
-    <b-collapse id="collapse-1">
+    <b-collapse id="collapse-vision">
+      <hr>
       <div v-if="visionResp.objects.length > 0">
         <a class="font-weight-bolder ml-2">物体検知</a>
         <div
@@ -62,7 +49,6 @@
       <b-alert variant="warning" :show="error != null" class="text-center">
         {{ error }}
       </b-alert>
-      <hr>
     </b-collapse>
   </div>
 </template>
@@ -76,7 +62,6 @@ export default {
   },
   data() {
     return {
-      carolie: null,
       error: null
     };
   },
@@ -105,10 +90,11 @@ export default {
   },
   watch: {
     visionResp(newVal, oldVal) {
-      this.carolie = null;
+      let calorie = null;
       if (newVal != null) {
         if (newVal.hitwords.validWords.length > 0) {
-          this.carolie = newVal.hitwords.validWords[0].text.replace('kcal', '');
+          calorie = newVal.hitwords.validWords[0].text.replace('kcal', '');
+          this.$store.commit('webapi/calorie', calorie);
         } else {
           let keyword = '';
           if (newVal.objects.length > 0) {
@@ -118,9 +104,10 @@ export default {
             .dispatch('webapi/getCalorie', keyword)
             .then(response => {
               if (response.data.length > 0) {
-                this.carolie = response.data[0].energ_kcal;
+                calorie = response.data[0].energ_kcal;
+                this.$store.commit('webapi/calorie', calorie);
               } else {
-                this.carolie = 'N/A';
+                this.$store.commit('webapi/calorie', 'N/A');
               }
             })
             .catch(err => {
@@ -129,7 +116,7 @@ export default {
                 err.response.data != null &&
                 err.response.data.error != null
               ) {
-                this.error = 'Carolie API Error : ' + err.response.data.error;
+                this.error = 'calorie API Error : ' + err.response.data.error;
               } else {
                 this.error = err;
               }
