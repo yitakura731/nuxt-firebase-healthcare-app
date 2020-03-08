@@ -26,7 +26,7 @@
             />
           </b-form-group>
           <div class="text-center">
-            <b-btn variant="primary" size="sm" block @click="localLogin">
+            <b-btn variant="info" size="sm" block @click="localLogin">
               ログイン
             </b-btn>
           </div>
