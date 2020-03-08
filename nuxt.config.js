@@ -3,8 +3,12 @@ require('dotenv').config({ path: './app.env' });
 
 console.log(`GOOGLE_VISION_URL = ${process.env.GOOGLE_VISION_URL}`);
 console.log(`GOOGLE_VISION_SECRET = ${process.env.GOOGLE_VISION_SECRET}`);
+console.log(`GOOGLE_MAP_SECRET = ${process.env.GOOGLE_MAP_SECRET}`);
 console.log(`RAKUTEN_SHOP_URL = ${process.env.RAKUTEN_SHOP_URL}`);
 console.log(`RAKUTEN_SHOP_SECRET = ${process.env.RAKUTEN_SHOP_SECRET}`);
+console.log(`CALORIE_API_URL = ${process.env.CALORIE_API_URL}`);
+console.log(`CALORIE_API_HOST = ${process.env.CALORIE_API_HOST}`);
+console.log(`CALORIE_API_SECRET = ${process.env.CALORIE_API_SECRET}`);
 
 module.exports = {
   mode: 'universal',
@@ -76,7 +80,11 @@ module.exports = {
     GOOGLE_VISION_URL: process.env.GOOGLE_VISION_URL,
     GOOGLE_VISION_SECRET: process.env.GOOGLE_VISION_SECRET,
     RAKUTEN_SHOP_URL: process.env.RAKUTEN_SHOP_URL,
-    RAKUTEN_SHOP_SECRET: process.env.RAKUTEN_SHOP_SECRET
+    RAKUTEN_SHOP_SECRET: process.env.RAKUTEN_SHOP_SECRET,
+    GOOGLE_MAP_SECRET: process.env.GOOGLE_MAP_SECRET,
+    CALORIE_API_URL: process.env.CALORIE_API_URL,
+    CALORIE_API_HOST: process.env.CALORIE_API_HOST,
+    CALORIE_API_SECRET: process.env.CALORIE_API_SECRET
   },
 
   vendor: ['vue2-google-maps'],
