@@ -46,7 +46,7 @@ export default {
   methods: {
     reset() {
       this.$store.commit('webapi/visionResp', null);
-      this.$store.commit('webapi/calorie', null);
+      this.$store.commit('webapi/newFood', null);
       this.captured = false;
     },
     capture() {

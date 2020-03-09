@@ -1,55 +1,52 @@
 <template>
-  <div v-if="visionResp != null" class="px-1">
-    <b-collapse id="collapse-vision">
-      <hr>
-      <div v-if="visionResp.objects.length > 0">
-        <a class="font-weight-bolder ml-2">物体検知</a>
-        <div
-          v-for="object in visionResp.objects"
-          :key="object.id" 
-          class="border rounded bg-light p-2 mx-1 mt-1 mb-3"
-        >
-          {{ object.name }}
+  <div v-if="visionResp != null" class="mt-2 px-1">
+    <div v-if="visionResp.objects.length > 0">
+      <a class="font-weight-bolder ml-2">物体検知</a>
+      <div
+        v-for="object in visionResp.objects"
+        :key="object.id" 
+        class="border rounded bg-light p-2 mx-1 mt-1 mb-3"
+      >
+        {{ object.name }}
+      </div>
+    </div>
+    <div v-else class="my-2">
+      <a class="font-weight-bolder ml-2">物体が見つかりません</a>
+    </div>
+    <a class="font-weight-bolder ml-2">ラベリング</a>
+    <div v-if="visionResp.labels.length > 0">
+      <hc-chart
+        :data="getDatasets()"
+        class="border rounded bg-light mx-1 mt-1 mb-3"
+      />
+    </div>
+    <div v-else class="border rounded bg-light m-1 mb-3">
+      <div class="ml-1 p-2">
+        検知できません
+      </div>
+    </div>
+    <a class="font-weight-bolder ml-2">テキスト抽出</a>
+    <div class="border rounded bg-light m-1 p-2">
+      <div
+        v-if="visionResp.hitwords.validWords.length > 0 || 
+          visionResp.hitwords.inValidWords.length > 0"
+      >
+        <a class="font-weight-bolder ml-2">有効テキスト</a>
+        <div class="border rounded bg-white text-info p-2 mb-2">
+          {{ validHitwords }}
+        </div>
+        <a class="font-weight-bolder ml-2">無効テキスト</a>
+        <div class="border rounded bg-white p-2">
+          {{ inValidHitwords }}
         </div>
       </div>
-      <div v-else class="my-2">
-        <a class="font-weight-bolder ml-2">物体が見つかりません</a>
+      <div v-else class="my-1">
+        <a class="ml-2">見つかりません</a>
       </div>
-      <a class="font-weight-bolder ml-2">ラベリング</a>
-      <div v-if="visionResp.labels.length > 0">
-        <hc-chart
-          :data="getDatasets()"
-          class="border rounded bg-light mx-1 mt-1 mb-3"
-        />
-      </div>
-      <div v-else class="border rounded bg-light m-1 mb-3">
-        <div class="ml-1 p-2">
-          検知できません
-        </div>
-      </div>
-      <a class="font-weight-bolder ml-2">テキスト抽出</a>
-      <div class="border rounded bg-light m-1 p-2">
-        <div
-          v-if="visionResp.hitwords.validWords.length > 0 || 
-            visionResp.hitwords.inValidWords.length > 0"
-        >
-          <a class="font-weight-bolder ml-2">有効テキスト</a>
-          <div class="border rounded bg-white text-info p-2 mb-2">
-            {{ validHitwords }}
-          </div>
-          <a class="font-weight-bolder ml-2">無効テキスト</a>
-          <div class="border rounded bg-white p-2">
-            {{ inValidHitwords }}
-          </div>
-        </div>
-        <div v-else class="my-1">
-          <a class="ml-2">見つかりません</a>
-        </div>
-      </div>
-      <b-alert variant="warning" :show="error != null" class="text-center">
-        {{ error }}
-      </b-alert>
-    </b-collapse>
+    </div>
+    <b-alert variant="warning" :show="error != null" class="text-center">
+      {{ error }}
+    </b-alert>
   </div>
 </template>
 
@@ -91,10 +88,14 @@ export default {
   watch: {
     visionResp(newVal, oldVal) {
       let calorie = null;
+      let name = null;
       if (newVal != null) {
         if (newVal.hitwords.validWords.length > 0) {
           calorie = newVal.hitwords.validWords[0].text.replace('kcal', '');
-          this.$store.commit('webapi/calorie', calorie);
+          this.$store.commit('webapi/newFood', {
+            name: 'Food Label',
+            calorie
+          });
         } else {
           let keyword = '';
           if (newVal.objects.length > 0) {
@@ -105,9 +106,16 @@ export default {
             .then(response => {
               if (response.data.length > 0) {
                 calorie = response.data[0].energ_kcal;
-                this.$store.commit('webapi/calorie', calorie);
+                name = response.data[0].shrt_desc;
+                this.$store.commit('webapi/newFood', {
+                  name,
+                  calorie
+                });
               } else {
-                this.$store.commit('webapi/calorie', 'N/A');
+                this.$store.commit('webapi/newFood', {
+                  name: 'Unknown',
+                  calorie: 'N/A'
+                });
               }
             })
             .catch(err => {

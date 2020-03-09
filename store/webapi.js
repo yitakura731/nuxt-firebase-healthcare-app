@@ -1,6 +1,24 @@
 export const state = () => ({
   visionResp: null,
-  calorie: null
+  calorie: null,
+  newFood: null,
+  foods: [
+    {
+      date: Date.parse('2020/03/04'),
+      name: 'apple',
+      calorie: 300
+    },
+    {
+      date: Date.parse('2020/03/03'),
+      name: 'orange',
+      calorie: 400
+    },
+    {
+      date: Date.parse('2020/03/02'),
+      name: 'cake',
+      calorie: 500
+    }
+  ]
 });
 
 export const mutations = {
@@ -9,6 +27,12 @@ export const mutations = {
   },
   calorie(state, calorie) {
     state.calorie = calorie;
+  },
+  foods(state, foods) {
+    state.foods = foods;
+  },
+  newFood(state, newFood) {
+    state.newFood = newFood;
   }
 };
 
@@ -18,10 +42,26 @@ export const getters = {
   },
   calorie: state => {
     return state.calorie;
+  },
+  foods: state => {
+    return state.foods;
+  },
+  newFoodods: state => {
+    return state.newFood;
   }
 };
 
 export const actions = {
+  registFoods({ commit, state }, food) {
+    const before = state.foods;
+    const after = [...before];
+    after.push({
+      date: new Date(),
+      name: food.name,
+      calorie: food.calorie
+    });
+    commit('foods', after);
+  },
   getCalorie(context, keyword) {
     return this.$axios({
       method: 'GET',
