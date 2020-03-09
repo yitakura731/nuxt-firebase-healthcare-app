@@ -1,16 +1,16 @@
 <template>
   <div>
-    <hc-map />
+    <hc-running />
   </div>
 </template>
 
 <script>
-import HCMap from '~/components/hc-map.vue';
+import HCRunning from '~/components/hc-running.vue';
 
 export default {
   layout: 'main',
   components: {
-    'hc-map': HCMap
+    'hc-running': HCRunning
   }
 };
 </script>

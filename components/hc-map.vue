@@ -4,7 +4,7 @@
       <GmapMap
         ref="gmap"
         :center="{lat:10, lng:10}"
-        :zoom="15"
+        :zoom="16"
         :options="{
           zoomControl: true,
           mapTypeControl: false,
