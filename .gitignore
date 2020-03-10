@@ -103,6 +103,6 @@ dist
 # TernJS port file
 .tern-port
 
-HCDemoApp01/.nuxt
-HCDemoApp01/node_modules
+HCDemoApp/.nuxt
+HCDemoApp/node_modules
 app.env
