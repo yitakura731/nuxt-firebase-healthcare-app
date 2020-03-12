@@ -26,7 +26,7 @@
         </div>
       </div>
     </div>
-    <hc-map />
+    <hc-map @updateLocation="updatedLocation" />
     <div class="d-flex">
       <b-button 
         v-if="!timerOn"
@@ -65,11 +65,17 @@ export default {
     return {
       stopWatch: Date.parse('2018/01/01 00:00:00'),
       distance: '00.00',
+      beforeLocation: null,
+      afterLocation: null,
       timerObj: null,
       timerOn: false
     };
   },
   methods: {
+    updatedLocation(payload) {
+      this.beforeLocation = this.afterLocation;
+      this.afterLocation = payload;
+    },
     startRun() {
       const self = this;
       this.timerObj = setInterval(() => {

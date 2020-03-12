@@ -17,7 +17,7 @@
         map-type-id="terrain"
         style="width: 340px; height: 340px"
       >
-        <GmapMarker :position="maplocation" :icon="icon" />
+        <GmapMarker :position="location" :icon="icon" />
       </GmapMap>
     </div>
   </div>
@@ -28,28 +28,38 @@ export default {
   data() {
     return {
       error: null,
-      maplocation: { lng: 0, lat: 0 },
+      location: { lng: 0, lat: 0 },
       icon: {
         url: require('@/static/circle.png'),
         size: { width: 20, height: 20, f: 'px', b: 'px' },
         scaledSize: { width: 20, height: 20, f: 'px', b: 'px' }
-      }
+      },
+      timerObj: null,
+      timerOn: false
     };
   },
   mounted() {
-    this.getPosition({ enableHighAccuracy: true })
-      .then(data => {
-        this.maplocation.lat = data.coords.latitude;
-        this.maplocation.lng = data.coords.longitude;
-        this.$refs.gmap.$mapPromise.then(map => {
-          map.panTo(this.maplocation);
-        });
-      })
-      .catch(err => {
-        this.error = err;
-      });
+    const self = this;
+    this.timerObj = setInterval(() => {
+      self.updatePosition();
+    }, 1000);
+    this.timerOn = true;
   },
   methods: {
+    updatePosition() {
+      this.getPosition({ enableHighAccuracy: true })
+        .then(data => {
+          this.location.lat = data.coords.latitude;
+          this.location.lng = data.coords.longitude;
+          this.$refs.gmap.$mapPromise.then(map => {
+            map.panTo(this.location);
+            this.$emit('updateLocation', this.location);
+          });
+        })
+        .catch(err => {
+          this.error = err;
+        });
+    },
     getPosition(options) {
       return new Promise((resolve, reject) => {
         navigator.geolocation.getCurrentPosition(resolve, reject, options);
