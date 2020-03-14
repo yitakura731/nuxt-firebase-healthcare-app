@@ -2,6 +2,7 @@ export const state = () => ({
   visionResp: null,
   calorie: null,
   newFood: null,
+  runs: [],
   foods: [
     {
       date: Date.parse('2020/03/04'),
@@ -28,6 +29,9 @@ export const mutations = {
   calorie(state, calorie) {
     state.calorie = calorie;
   },
+  runs(state, runs) {
+    state.runs = runs;
+  },
   foods(state, foods) {
     state.foods = foods;
   },
@@ -52,6 +56,16 @@ export const getters = {
 };
 
 export const actions = {
+  registRun({ commit, state }, run) {
+    const before = state.runs;
+    const after = [...before];
+    after.push({
+      date: new Date(),
+      distance: run.distance,
+      calorie: run.calorie
+    });
+    commit('runs', after);
+  },
   registFoods({ commit, state }, food) {
     const before = state.foods;
     const after = [...before];
