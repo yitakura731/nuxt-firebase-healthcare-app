@@ -26,7 +26,7 @@
         </div>
       </div>
     </div>
-    <hc-map @updateLocation="updatedLocation" />
+    <hc-map :on-running="onRunning" @updatedDistance="updatedDistance" />
     <div class="d-flex">
       <b-button 
         v-if="!timerOn"
@@ -51,7 +51,7 @@
         おしまい
       </b-button>
     </div>
-    <div v-if="runningOn && !timerOn" class="d-flex border m-1 rounded">
+    <div v-if="onRunning && !timerOn" class="d-flex border m-1 rounded">
       <div class="flex-fill">
         <div class="w-100 text-center">
           <small class="mb-0">
@@ -100,12 +100,9 @@ export default {
       stopWatch: Date.parse('2018/01/01 00:00:00'),
       distance: 0,
       calorie: 0,
-      beforeLocation: null,
-      afterLocation: null,
-      distanceLocation: 0,
       timerObj: null,
       timerOn: false,
-      runningOn: false
+      onRunning: false
     };
   },
   methods: {
@@ -115,21 +112,8 @@ export default {
         calorie: this.calorie
       });
     },
-    updatedLocation(payload) {
-      this.beforeLocation = this.afterLocation;
-      this.afterLocation = payload;
-      if (this.beforeLocation != null && this.afterLocation != null) {
-        const lat1 = (this.beforeLocation.lat * Math.PI) / 180;
-        const lng1 = (this.beforeLocation.lng * Math.PI) / 180;
-        const lat2 = (this.afterLocation.lat * Math.PI) / 180;
-        const lng2 = (this.afterLocation.lng * Math.PI) / 180;
-        this.distanceLocation =
-          6371 *
-          Math.acos(
-            Math.cos(lat1) * Math.cos(lat2) * Math.cos(lng2 - lng1) +
-              Math.sin(lat1) * Math.sin(lat2)
-          );
-      }
+    updatedDistance(payload) {
+      this.distance = payload;
     },
     startRun() {
       const self = this;
@@ -137,7 +121,7 @@ export default {
         self.count();
       }, 1000);
       this.timerOn = true;
-      this.runningOn = true;
+      this.onRunning = true;
     },
     stopRun() {
       clearInterval(this.timerObj);
@@ -147,13 +131,11 @@ export default {
     completeRun() {
       clearInterval(this.timerObj);
       this.stopWatch = Date.parse('2018/01/01 00:00:00');
-      this.distance = 0;
       this.timerOn = false;
-      this.runningOn = false;
+      this.onRunning = false;
     },
     count() {
       this.stopWatch += 1000;
-      this.distance += this.distanceLocation;
     },
     toFormatString(date) {
       const hour = ('0' + date.getHours()).slice(-2);
