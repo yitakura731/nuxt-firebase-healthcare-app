@@ -49,7 +49,6 @@ export default {
         size: { width: 20, height: 20, f: 'px', b: 'px' },
         scaledSize: { width: 20, height: 20, f: 'px', b: 'px' }
       },
-      index: 0,
       timerObj: null
     };
   },
@@ -72,10 +71,9 @@ export default {
       const self = this;
       this.getPosition({ enableHighAccuracy: true })
         .then(data => {
-          this.index++;
           let dist = 0;
-          const lat = data.coords.latitude + 0.0001 * this.index;
-          const lng = data.coords.longitude + 0.0001 * this.index;
+          const lat = data.coords.latitude;
+          const lng = data.coords.longitude;
           this.location.lat = lat - 0.00015;
           this.location.lng = lng;
           this.$refs.gmap.$mapPromise.then(map => {
