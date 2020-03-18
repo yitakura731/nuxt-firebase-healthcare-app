@@ -27,10 +27,11 @@
       </div>
     </div>
     <hc-map :on-running="onRunning" @updatedDistance="updatedDistance" />
-    <div class="d-flex">
+    <div class="d-flex px-5 py-1">
       <b-button 
         v-if="!timerOn"
-        class="flex-fill pill bg-success border-0 m-1" 
+        pill
+        class="flex-fill bg-success border-0" 
         @click="startRun()"
       >
         <font-awesome-icon :icon="['fas', 'running']" />
@@ -38,17 +39,12 @@
       </b-button>
       <b-button 
         v-if="timerOn"
-        class="flex-fill pill bg-warning border-0 m-1" 
+        pill
+        class="flex-fill bg-warning border-0" 
         @click="stopRun()"
       >
         <font-awesome-icon :icon="['fas', 'running']" />
         止まる
-      </b-button>
-      <b-button 
-        class="flex-fill pill bg-info border-0 m-1"
-        @click="completeRun()"
-      >
-        おしまい
       </b-button>
     </div>
     <div v-if="onRunning && !timerOn" class="d-flex border m-1 rounded">
@@ -105,12 +101,23 @@ export default {
       onRunning: false
     };
   },
+  computed: {
+    user() {
+      return this.$store.state.webapi.user;
+    }
+  },
   methods: {
     regist() {
       this.$store.dispatch('webapi/registRun', {
         distance: this.distance,
         calorie: this.calorie
       });
+      clearInterval(this.timerObj);
+      this.stopWatch = Date.parse('2018/01/01 00:00:00');
+      this.distance = 0;
+      this.calorie = 0;
+      this.timerOn = false;
+      this.onRunning = false;
     },
     updatedDistance(payload) {
       this.distance = payload;
@@ -126,15 +133,7 @@ export default {
     stopRun() {
       clearInterval(this.timerObj);
       this.timerOn = false;
-      this.calorie = Math.round(this.distance * 60);
-    },
-    completeRun() {
-      clearInterval(this.timerObj);
-      this.stopWatch = Date.parse('2018/01/01 00:00:00');
-      this.distance = 0;
-      this.calorie = 0;
-      this.timerOn = false;
-      this.onRunning = false;
+      this.calorie = Math.round(this.distance * this.user.weight);
     },
     count() {
       this.stopWatch += 1000;

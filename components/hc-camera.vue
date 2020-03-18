@@ -7,11 +7,11 @@
       </div>
     </div>
     <div class="mt-3 d-flex">
-      <b-button class="bg-success border-0 hc-button mr-1" @click="capture()">
+      <b-button pill class="bg-success border-0 hc-button mr-1" @click="capture()">
         <font-awesome-icon :icon="['fas', 'utensils']" />
         これ食べた！
       </b-button>
-      <b-button class="bg-secoundary border-0 hc-button ml-1" @click="reset()">
+      <b-button pill class="bg-secoundary border-0 hc-button ml-1" @click="reset()">
         もう一度！
       </b-button>
     </div>

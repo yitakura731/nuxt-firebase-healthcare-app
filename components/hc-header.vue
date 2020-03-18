@@ -26,6 +26,13 @@
         </b-dropdown-item>
         <hr class="my-1">
         <b-dropdown-item>
+          <nuxt-link to="/profile">
+            <font-awesome-icon icon="user-circle" />
+            <a class="ml-2">アカウント</a>
+          </nuxt-link>
+        </b-dropdown-item>
+        <hr class="my-1">
+        <b-dropdown-item>
           <nuxt-link to="/">
             <font-awesome-icon icon="sign-out-alt" />
             <a class="ml-2">ログアウト</a>

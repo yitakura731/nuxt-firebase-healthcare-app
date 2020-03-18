@@ -3,6 +3,11 @@ export const state = () => ({
   calorie: null,
   newFood: null,
   runs: [],
+  user: {
+    name: 'Yamada Taro',
+    height: 173,
+    weight: 70
+  },
   foods: [
     {
       date: Date.parse('2020/03/04'),
@@ -23,6 +28,9 @@ export const state = () => ({
 });
 
 export const mutations = {
+  user(state, user) {
+    state.user = user;
+  },
   visionResp(state, visionResp) {
     state.visionResp = visionResp;
   },
@@ -41,6 +49,9 @@ export const mutations = {
 };
 
 export const getters = {
+  user: state => {
+    return state.user;
+  },
   visionResp: state => {
     return state.visionResp;
   },
