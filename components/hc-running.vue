@@ -72,7 +72,7 @@
         </div>
         <div class="w-100 text-center">
           <h2 class="mb-0">
-            {{ Math.round(calorie, 1) }}
+            {{ calorie }}
           </h2>
         </div>
       </div>
@@ -126,11 +126,13 @@ export default {
     stopRun() {
       clearInterval(this.timerObj);
       this.timerOn = false;
-      this.calorie = this.distance * 60;
+      this.calorie = Math.round(this.distance * 60);
     },
     completeRun() {
       clearInterval(this.timerObj);
       this.stopWatch = Date.parse('2018/01/01 00:00:00');
+      this.distance = 0;
+      this.calorie = 0;
       this.timerOn = false;
       this.onRunning = false;
     },

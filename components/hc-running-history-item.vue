@@ -2,7 +2,7 @@
   <div>
     <div class="d-flex p-1"> 
       <p class="flex-fill mb-0">
-        {{ run.distance }}
+        {{ run.distance.toFixed(2) }} km
       </p>
       <p class="mb-0">
         {{ run.calorie }} kcal
@@ -19,7 +19,7 @@ export default {
       type: Object,
       required: true,
       validator(obj) {
-        return typeof obj.name === 'string';
+        return typeof obj.distance === 'number';
       }
     }
   }
