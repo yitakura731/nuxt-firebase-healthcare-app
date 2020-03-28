@@ -61,50 +61,37 @@ export default {
     }
   },
   mounted() {
-    const self = this;
-    this.timerObj = setInterval(() => {
-      self.updatePosition();
-    }, 4000);
+    navigator.geolocation.watchPosition(
+      this.successPosition,
+      this.errorPosition,
+      { enableHighAccuracy: true }
+    );
   },
   methods: {
-    updatePosition() {
-      const self = this;
-      this.getPosition({ enableHighAccuracy: true })
-        .then(data => {
-          let dist = 0;
-          const lat = data.coords.latitude;
-          const lng = data.coords.longitude;
-          this.location.lat = lat - 0.00015;
-          this.location.lng = lng;
-          this.$refs.gmap.$mapPromise.then(map => {
-            map.panTo(this.location);
-            if (self.onRunning) {
-              if (self.paths.length > 1) {
-                dist = self.getDistance(
-                  self.paths[self.paths.length - 1].lat,
-                  self.paths[self.paths.length - 1].lng,
-                  self.paths[self.paths.length - 2].lat,
-                  self.paths[self.paths.length - 2].lng
-                );
-                if (dist <= 0.02) {
-                  self.paths.push({ lat, lng });
-                  self.distance += dist;
-                  self.$emit('updatedDistance', self.distance);
-                }
-              } else {
-                self.paths.push({ lat, lng });
-              }
-            }
-          });
-        })
-        .catch(err => {
-          this.error = err;
-        });
-    },
-    getPosition(options) {
-      return new Promise((resolve, reject) => {
-        navigator.geolocation.getCurrentPosition(resolve, reject, options);
+    successPosition(position) {
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
+      this.location.lat = lat - 0.00015;
+      this.location.lng = lng;
+      this.$refs.gmap.$mapPromise.then(map => {
+        map.panTo(this.location);
+        if (this.onRunning) {
+          this.paths.push({ lat, lng });
+          if (this.paths.length > 1) {
+            const dist = this.getDistance(
+              this.paths[this.paths.length - 1].lat,
+              this.paths[this.paths.length - 1].lng,
+              this.paths[this.paths.length - 2].lat,
+              this.paths[this.paths.length - 2].lng
+            );
+            this.distance += dist;
+            this.$emit('updatedDistance', this.distance);
+          }
+        }
       });
+    },
+    errorPosition(err) {
+      this.error = err;
     },
     getDistance(latitude1, longitude1, latitude2, longitude2) {
       const lat1 = latitude1 * (Math.PI / 180);
