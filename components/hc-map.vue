@@ -18,7 +18,7 @@
         style="width: 340px; height: 340px"
       >
         <GmapMarker :position="location" :icon="icon" />
-        <gmap-polygon 
+        <gmap-polyline 
           v-if="paths.length > 0" 
           :paths="paths" 
           :options="{
@@ -73,22 +73,24 @@ export default {
       const lng = position.coords.longitude;
       this.location.lat = lat - 0.00015;
       this.location.lng = lng;
-      this.$refs.gmap.$mapPromise.then(map => {
-        map.panTo(this.location);
-        if (this.onRunning) {
-          this.paths.push({ lat, lng });
-          if (this.paths.length > 1) {
-            const dist = this.getDistance(
-              this.paths[this.paths.length - 1].lat,
-              this.paths[this.paths.length - 1].lng,
-              this.paths[this.paths.length - 2].lat,
-              this.paths[this.paths.length - 2].lng
-            );
-            this.distance += dist;
-            this.$emit('updatedDistance', this.distance);
+      if (this.$refs.gmap.$mapPromise) {
+        this.$refs.gmap.$mapPromise.then(map => {
+          map.panTo(this.location);
+          if (this.onRunning) {
+            this.paths.push({ lat, lng });
+            if (this.paths.length > 1) {
+              const dist = this.getDistance(
+                this.paths[this.paths.length - 1].lat,
+                this.paths[this.paths.length - 1].lng,
+                this.paths[this.paths.length - 2].lat,
+                this.paths[this.paths.length - 2].lng
+              );
+              this.distance += dist;
+              this.$emit('updatedDistance', this.distance);
+            }
           }
-        }
-      });
+        });
+      }
     },
     errorPosition(err) {
       this.error = err;
