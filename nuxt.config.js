@@ -44,6 +44,7 @@ module.exports = {
   ** Plugins to load before mounting the App
   */
   plugins: [
+    { src: '~/plugins/firebase', ssr: false },
     { src: '~/plugins/pwa-setup', ssr: false },
     { src: '~/plugins/vue2-google-maps.js', ssr: true }
   ],

@@ -32,16 +32,30 @@
           </nuxt-link>
         </b-dropdown-item>
         <hr class="my-1">
-        <b-dropdown-item>
-          <nuxt-link to="/">
-            <font-awesome-icon icon="sign-out-alt" />
-            <a class="ml-2">ログアウト</a>
-          </nuxt-link>
+        <b-dropdown-item @click="logout">
+          <font-awesome-icon icon="sign-out-alt" />
+          <a class="ml-2">ログアウト</a>
         </b-dropdown-item>
       </b-dropdown>
     </div>
   </div>
 </template>
+
+<script>
+import firebase from '@/plugins/firebase';
+export default {
+  methods: {
+    logout() {
+      firebase
+        .auth()
+        .signOut()
+        .then(user => {
+          this.$router.push('/');
+        });
+    }
+  }
+};
+</script>
 
 <style scoped>
 .hc-header {

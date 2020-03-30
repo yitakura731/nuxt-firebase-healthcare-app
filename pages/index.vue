@@ -8,9 +8,9 @@
     <b-row align-h="center" align-v="center" class="pt-3 ">
       <b-col md="4">
         <b-card class="card-area m-2">
-          <b-form-group label="ユーザーID" label-size="sm">
+          <b-form-group label="メールアドレス" label-size="sm">
             <b-input
-              v-model="localId"
+              v-model="email"
               size="sm"
               placeholder=""
               @keydown.enter="localLogin"
@@ -44,20 +44,26 @@
       <b-col md="1" />
       <b-col md="4" class="text-center">
         <b-card class="card-area m-2">
-          <div v-for="s in strategies" :key="s.key" class="mb-2">
-            <form name="socialLogin" method="post" :action="s.action">
-              <b-btn
-                type="submit"
-                block
-                size="md"
-                :style="{ background: s.color }"
-                @click="socialLogin"
-              >
-                <font-awesome-icon :icon="s.icon" style="font-size: 24px" />
-                <span class="ml-2">{{ s.name }}でログイン</span>
-              </b-btn>
-            </form>
-          </div>
+          <b-button
+            type="submit"
+            block
+            size="md"
+            variant="dark"
+            @click="googleLogin"
+          >
+            <font-awesome-icon :icon="['fab', 'github']" style="font-size: 24px" />
+            <span class="ml-2">Githubでログイン</span>
+          </b-button>
+          <b-button
+            type="submit"
+            block
+            size="md"
+            variant="danger"
+            @click="githubLogin"
+          >
+            <font-awesome-icon :icon="['fab', 'google']" style="font-size: 24px" />
+            <span class="ml-2">Googleでログイン</span>
+          </b-button>
         </b-card>
       </b-col>
     </b-row>
@@ -65,38 +71,57 @@
 </template>
 
 <script>
+import firebase from '@/plugins/firebase';
 export default {
   data() {
     return {
-      localId: null,
+      email: null,
       password: null,
       error: null
     };
   },
-  computed: {
-    strategies() {
-      return [
-        {
-          key: 'github',
-          name: 'Git Hub',
-          color: '#333',
-          icon: ['fab', 'github']
-        },
-        {
-          key: 'facebook',
-          name: 'facebook',
-          color: '#3C5A99',
-          icon: ['fab', 'facebook']
-        }
-      ];
-    }
+  mounted() {
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        this.$router.push('/meal');
+      }
+    });
   },
   methods: {
     localLogin(event) {
-      this.$router.push('/meal');
+      const email = this.email;
+      const password = this.password;
+      firebase
+        .auth()
+        .signInWithEmailAndPassword(email, password)
+        .then(user => {
+          this.$router.push('/meal');
+        })
+        .catch(error => {
+          this.error = error;
+        });
     },
-    socialLogin(event) {
-      this.$router.push('/meal');
+    googleLogin(event) {
+      firebase
+        .auth()
+        .signInWithPopup(new firebase.auth.GoogleAuthProvider())
+        .then(user => {
+          this.$router.push('/meal');
+        })
+        .catch(error => {
+          this.error = error;
+        });
+    },
+    githubLogin(event) {
+      firebase
+        .auth()
+        .signInWithPopup(new firebase.auth.GithubAuthProvider())
+        .then(user => {
+          this.$router.push('/meal');
+        })
+        .catch(error => {
+          this.error = error;
+        });
     }
   }
 };

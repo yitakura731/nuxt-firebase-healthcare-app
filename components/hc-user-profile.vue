@@ -10,7 +10,7 @@
     />
     <div class="w-100 p-3">
       <div class="border rounded text-center p-1">
-        <h3>{{ user.name }}</h3>
+        <h3>{{ name }}</h3>
       </div>
     </div>
     <div class="w-100 p-3">
@@ -19,7 +19,7 @@
           身長
         </h5>
         <h5 class="pr-2">
-          {{ user.height }} cm
+          {{ height }} cm
         </h5>
       </div>
     </div>
@@ -29,7 +29,7 @@
           体重
         </h5>
         <h5 class="pr-2">
-          {{ user.weight }} kg
+          {{ weight }} kg
         </h5>
       </div>
     </div>
@@ -37,11 +37,36 @@
 </template>>
 
 <script>
+import firebase from '@/plugins/firebase';
+const db = firebase.firestore();
+
 export default {
-  computed: {
-    user() {
-      return this.$store.state.webapi.user;
-    }
+  data() {
+    return {
+      name: null,
+      height: 0,
+      weight: 0,
+      error: null
+    };
+  },
+  mounted() {
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        db.collection('users')
+          .doc(user.uid)
+          .get()
+          .then(snapshot => {
+            if (snapshot.exists) {
+              this.name = snapshot.data().displayName;
+              this.height = snapshot.data().height;
+              this.weight = snapshot.data().weight;
+            }
+          })
+          .catch(error => {
+            this.error = error;
+          });
+      }
+    });
   }
 };
 </script>>
