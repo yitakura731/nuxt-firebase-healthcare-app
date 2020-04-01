@@ -20,7 +20,7 @@
         <GmapMarker :position="location" :icon="icon" />
         <gmap-polyline 
           v-if="paths.length > 0" 
-          :paths="paths" 
+          :path.sync="paths" 
           :options="{
             'strokeColor': '#4169e1',
             'strokeWeight': 10}"
@@ -73,7 +73,7 @@ export default {
       const lng = position.coords.longitude;
       this.location.lat = lat - 0.00015;
       this.location.lng = lng;
-      if (this.$refs.gmap.$mapPromise) {
+      if (this.$refs.gmap) {
         this.$refs.gmap.$mapPromise.then(map => {
           map.panTo(this.location);
           if (this.onRunning) {

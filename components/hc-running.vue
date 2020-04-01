@@ -51,7 +51,7 @@
       <div class="flex-fill">
         <div class="w-100 text-center">
           <small class="mb-0">
-            走行距離(lm)
+            走行距離(km)
           </small>
         </div>
         <div class="w-100 text-center">
