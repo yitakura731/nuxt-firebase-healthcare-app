@@ -9,12 +9,23 @@ console.log(`RAKUTEN_SHOP_SECRET = ${process.env.RAKUTEN_SHOP_SECRET}`);
 console.log(`CALORIE_API_URL = ${process.env.CALORIE_API_URL}`);
 console.log(`CALORIE_API_HOST = ${process.env.CALORIE_API_HOST}`);
 console.log(`CALORIE_API_SECRET = ${process.env.CALORIE_API_SECRET}`);
+console.log(`FIREBASE_API_KEY = ${process.env.FIREBASE_API_KEY}`);
+console.log(`FIREBASE_AUTH_DOMAIN = ${process.env.FIREBASE_AUTH_DOMAIN}`);
+console.log(`FIREBASE_DATABASE_URL = ${process.env.FIREBASE_DATABASE_URL}`);
+console.log(`FIREBASE_PROJECT_ID = ${process.env.FIREBASE_PROJECT_ID}`);
+console.log(`FIREBASE_STORAGE_BACKET = ${process.env.FIREBASE_STORAGE_BACKET}`);
+console.log(
+  `FIREBASE_MESSAGING_SENSORID = ${process.env.FIREBASE_MESSAGING_SENSORID}`
+);
+console.log(`FIREBASE_APPID = ${process.env.FIREBASE_APPID}`);
+console.log(`FIREBASE_MESURE_ID = ${process.env.FIREBASE_MESURE_ID}`);
 
 module.exports = {
   mode: 'universal',
 
   router: {
-    linkActiveClass: 'active'
+    linkActiveClass: 'active',
+    middleware: 'auth'
   },
 
   /*

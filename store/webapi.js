@@ -2,34 +2,14 @@ export const state = () => ({
   visionResp: null,
   calorie: null,
   newFood: null,
+  onRunning: false,
   runs: [],
-  user: {
-    name: 'Yamada Taro',
-    height: 173,
-    weight: 70
-  },
-  foods: [
-    {
-      date: Date.parse('2020/03/04'),
-      name: 'apple',
-      calorie: 300
-    },
-    {
-      date: Date.parse('2020/03/03'),
-      name: 'orange',
-      calorie: 400
-    },
-    {
-      date: Date.parse('2020/03/02'),
-      name: 'cake',
-      calorie: 500
-    }
-  ]
+  foods: []
 });
 
 export const mutations = {
-  user(state, user) {
-    state.user = user;
+  onRunning(state, onRunning) {
+    state.onRunning = onRunning;
   },
   visionResp(state, visionResp) {
     state.visionResp = visionResp;
@@ -49,8 +29,8 @@ export const mutations = {
 };
 
 export const getters = {
-  user: state => {
-    return state.user;
+  onRunning: state => {
+    return state.onRunning;
   },
   visionResp: state => {
     return state.visionResp;

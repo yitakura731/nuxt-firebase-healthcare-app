@@ -26,7 +26,7 @@
         </div>
       </div>
     </div>
-    <hc-map :on-running="onRunning" @updatedDistance="updatedDistance" />
+    <hc-map @updatedDistance="updatedDistance" />
     <div class="d-flex px-5 py-1">
       <b-button 
         v-if="!timerOn"
@@ -56,7 +56,7 @@
         </div>
         <div class="w-100 text-center">
           <h2 class="mb-0">
-            {{ distance.toFixed(2) }}
+            {{ runnedDistance.toFixed(2) }}
           </h2>
         </div>
       </div>
@@ -85,6 +85,8 @@
 <script>
 import HCMap from '~/components/hc-map.vue';
 import HcRunningHistory from '~/components/hc-running-history.vue';
+import firebase from '@/plugins/firebase';
+const db = firebase.firestore();
 
 export default {
   components: {
@@ -95,29 +97,47 @@ export default {
     return {
       stopWatch: Date.parse('2018/01/01 00:00:00'),
       distance: 0,
+      runnedDistance: 0,
       calorie: 0,
+      userWeight: 0,
       timerObj: null,
-      timerOn: false,
-      onRunning: false
+      timerOn: false
     };
   },
   computed: {
-    user() {
-      return this.$store.state.webapi.user;
+    onRunning() {
+      return this.$store.state.webapi.onRunning;
     }
+  },
+  mounted() {
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        db.collection('users')
+          .doc(user.uid)
+          .get()
+          .then(snapshot => {
+            if (snapshot.exists) {
+              this.userWeight = snapshot.data().weight;
+            }
+          })
+          .catch(error => {
+            this.error = error;
+          });
+      }
+    });
   },
   methods: {
     regist() {
       this.$store.dispatch('webapi/registRun', {
-        distance: this.distance,
+        date: new Date(),
+        distance: this.runnedDistance,
         calorie: this.calorie
       });
       clearInterval(this.timerObj);
       this.stopWatch = Date.parse('2018/01/01 00:00:00');
       this.distance = 0;
       this.calorie = 0;
-      this.timerOn = false;
-      this.onRunning = false;
+      this.$store.commit('webapi/onRunning', false);
     },
     updatedDistance(payload) {
       this.distance = payload;
@@ -128,12 +148,13 @@ export default {
         self.count();
       }, 1000);
       this.timerOn = true;
-      this.onRunning = true;
+      this.$store.commit('webapi/onRunning', true);
     },
     stopRun() {
       clearInterval(this.timerObj);
       this.timerOn = false;
-      this.calorie = Math.round(this.distance * this.user.weight);
+      this.runnedDistance = this.distance;
+      this.calorie = Math.round(this.runnedDistance * this.userWeight);
     },
     count() {
       this.stopWatch += 1000;

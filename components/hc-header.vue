@@ -6,12 +6,17 @@
         HC Demo App
       </div>
     </div>
-    <div class="mr-2 border-0 rounded">
-      <b-dropdown right no-caret variant="bg-primary">
+    <div v-if="onRunning">
+      <div class="mr-3">
+        <font-awesome-icon :icon="['fas', 'running']" />
+      </div>
+    </div>
+    <div v-else class="mr-2 border-0 rounded">
+      <b-dropdown right no-caret variant="bg-primary" menu-class="customDropDownMenu">
         <template v-slot:button-content>
           <font-awesome-icon :icon="['fas', 'align-justify']" />
         </template>
-        <b-dropdown-item>
+        <b-dropdown-item> 
           <nuxt-link to="/meal">
             <font-awesome-icon icon="utensils" />
             <a class="ml-2">食事</a>
@@ -39,11 +44,17 @@
       </b-dropdown>
     </div>
   </div>
+  </div>
 </template>
 
 <script>
 import firebase from '@/plugins/firebase';
 export default {
+  computed: {
+    onRunning() {
+      return this.$store.state.webapi.onRunning;
+    }
+  },
   methods: {
     logout() {
       firebase
@@ -66,5 +77,10 @@ export default {
   font-size: 24px;
   width: 100%;
   height: 44px;
+}
+
+.customDropDownMenu {
+  color: red;
+  background-color: red;
 }
 </style>

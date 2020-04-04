@@ -32,12 +32,6 @@
 
 <script>
 export default {
-  props: {
-    onRunning: {
-      type: Boolean,
-      required: true
-    }
-  },
   data() {
     return {
       error: null,
@@ -51,6 +45,11 @@ export default {
       },
       timerObj: null
     };
+  },
+  computed: {
+    onRunning() {
+      return this.$store.state.webapi.onRunning;
+    }
   },
   watch: {
     onRunning(newVal, oldVal) {
