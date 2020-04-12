@@ -49,7 +49,7 @@
             block
             size="md"
             variant="dark"
-            @click="googleLogin"
+            @click="githubLogin"
           >
             <font-awesome-icon :icon="['fab', 'github']" style="font-size: 24px" />
             <span class="ml-2">Githubでログイン</span>
@@ -59,7 +59,7 @@
             block
             size="md"
             variant="danger"
-            @click="githubLogin"
+            @click="googleLogin"
           >
             <font-awesome-icon :icon="['fab', 'google']" style="font-size: 24px" />
             <span class="ml-2">Googleでログイン</span>
