@@ -44,7 +44,6 @@
       </b-dropdown>
     </div>
   </div>
-  </div>
 </template>
 
 <script>
@@ -60,7 +59,7 @@ export default {
       firebase
         .auth()
         .signOut()
-        .then(user => {
+        .then(() => {
           this.$router.push('/');
         });
     }

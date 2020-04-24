@@ -38,7 +38,6 @@
 
 <script>
 import firebase from '@/plugins/firebase';
-const db = firebase.firestore();
 
 export default {
   data() {
@@ -52,19 +51,11 @@ export default {
   mounted() {
     firebase.auth().onAuthStateChanged(user => {
       if (user) {
-        db.collection('users')
-          .doc(user.uid)
-          .get()
-          .then(snapshot => {
-            if (snapshot.exists) {
-              this.name = snapshot.data().displayName;
-              this.height = snapshot.data().height;
-              this.weight = snapshot.data().weight;
-            }
-          })
-          .catch(error => {
-            this.error = error;
-          });
+        this.$store.dispatch('webapi/getCurrentUser', user.uid).then(user => {
+          this.name = user.name;
+          this.height = user.height;
+          this.weight = user.weight;
+        });
       }
     });
   }

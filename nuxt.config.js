@@ -84,6 +84,7 @@ module.exports = {
     '@nuxtjs/axios',
     'bootstrap-vue/nuxt',
     '@nuxtjs/pwa',
+    ['@nuxtjs/moment', ['ja']],
     ['@nuxtjs/dotenv', { filename: './app.env' }],
     'nuxt-fontawesome'
   ],

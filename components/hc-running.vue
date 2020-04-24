@@ -86,7 +86,6 @@
 import HCMap from '~/components/hc-map.vue';
 import HcRunningHistory from '~/components/hc-running-history.vue';
 import firebase from '@/plugins/firebase';
-const db = firebase.firestore();
 
 export default {
   components: {
@@ -99,7 +98,7 @@ export default {
       distance: 0,
       runnedDistance: 0,
       calorie: 0,
-      userWeight: 0,
+      currUser: {},
       timerObj: null,
       timerOn: false
     };
@@ -112,23 +111,17 @@ export default {
   mounted() {
     firebase.auth().onAuthStateChanged(user => {
       if (user) {
-        db.collection('users')
-          .doc(user.uid)
-          .get()
-          .then(snapshot => {
-            if (snapshot.exists) {
-              this.userWeight = snapshot.data().weight;
-            }
-          })
-          .catch(error => {
-            this.error = error;
-          });
+        this.$store.dispatch('webapi/getCurrentUser', user.uid).then(user => {
+          this.currUser.weight = user.weight;
+          this.currUser.id = user.id;
+        });
       }
     });
   },
   methods: {
     regist() {
       this.$store.dispatch('webapi/registRun', {
+        userId: this.currUser.id,
         date: new Date(),
         distance: this.runnedDistance,
         calorie: this.calorie
@@ -145,7 +138,7 @@ export default {
     startRun() {
       const self = this;
       this.timerObj = setInterval(() => {
-        self.count();
+        self.stopWatch += 1000;
       }, 1000);
       this.timerOn = true;
       this.$store.commit('webapi/onRunning', true);
@@ -154,10 +147,7 @@ export default {
       clearInterval(this.timerObj);
       this.timerOn = false;
       this.runnedDistance = this.distance;
-      this.calorie = Math.round(this.runnedDistance * this.userWeight);
-    },
-    count() {
-      this.stopWatch += 1000;
+      this.calorie = Math.round(this.runnedDistance * this.currUser.weight);
     },
     toFormatString(date) {
       const hour = ('0' + date.getHours()).slice(-2);

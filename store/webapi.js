@@ -1,3 +1,6 @@
+import firebase from '@/plugins/firebase';
+const db = firebase.firestore();
+
 export const state = () => ({
   visionResp: null,
   calorie: null,
@@ -47,25 +50,45 @@ export const getters = {
 };
 
 export const actions = {
-  registRun({ commit, state }, run) {
-    const before = state.runs;
-    const after = [...before];
-    after.push({
-      date: new Date(),
-      distance: run.distance,
-      calorie: run.calorie
-    });
-    commit('runs', after);
+  async registRun({ dispatch }, run) {
+    await db.collection('runs').add(run);
+    await dispatch('fetchRuns', run);
   },
-  registFoods({ commit, state }, food) {
-    const before = state.foods;
-    const after = [...before];
-    after.push({
-      date: new Date(),
-      name: food.name,
-      calorie: food.calorie
-    });
-    commit('foods', after);
+  async fetchRuns({ commit }, arg) {
+    const snapshot = await db
+      .collection('runs')
+      .where('userId', '==', arg.userId)
+      .get();
+    const retVal = [];
+    if (!snapshot.empty) {
+      snapshot.docs.forEach(run => {
+        if (run.exists) {
+          retVal.push({
+            date: run.data().date,
+            distance: run.data().distance,
+            calorie: run.data().calorie
+          });
+        }
+      });
+    }
+    commit('runs', retVal);
+  },
+  async registFoods({ dispatch }, food) {
+    await db.collection('meals').add(food);
+  },
+  async getCurrentUser(context, uid) {
+    const snapshot = await db
+      .collection('users')
+      .doc(uid)
+      .get();
+    const retVal = {};
+    if (snapshot.exists) {
+      retVal.id = uid;
+      retVal.name = snapshot.data().displayName;
+      retVal.height = snapshot.data().height;
+      retVal.weight = snapshot.data().weight;
+    }
+    return retVal;
   },
   getCalorie(context, keyword) {
     return this.$axios({
