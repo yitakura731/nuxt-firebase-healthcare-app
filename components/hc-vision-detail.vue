@@ -15,7 +15,7 @@
     </div>
     <a class="font-weight-bolder ml-2">ラベリング</a>
     <div v-if="visionResp.labels.length > 0">
-      <hc-chart
+      <hc-vision-detail-chart
         :data="getDatasets()"
         class="border rounded bg-light mx-1 mt-1 mb-3"
       />
@@ -51,11 +51,11 @@
 </template>
 
 <script>
-import HCChart from '~/components/hc-chart.vue';
+import HCVisionDetailChart from '~/components/hc-vision-detail-chart.vue';
 
 export default {
   components: {
-    'hc-chart': HCChart
+    'hc-vision-detail-chart': HCVisionDetailChart
   },
   data() {
     return {

@@ -58,13 +58,14 @@ export const actions = {
     const snapshot = await db
       .collection('runs')
       .where('userId', '==', arg.userId)
+      .orderBy('date', 'desc')
       .get();
     const retVal = [];
     if (!snapshot.empty) {
       snapshot.docs.forEach(run => {
         if (run.exists) {
           retVal.push({
-            date: run.data().date,
+            date: run.data().date.toDate(),
             distance: run.data().distance,
             calorie: run.data().calorie
           });
