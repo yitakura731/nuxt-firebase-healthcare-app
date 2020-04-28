@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="p-1">
     <div class="d-flex">
       <div class="flex-fill">
         <div class="w-100 text-center">
@@ -78,6 +78,10 @@
         </b-button>
       </div>
     </div>
+
+    <h6 class="pl-1 pt-3">
+      <bold>最近のランニング</bold>
+    </h6>
     <hc-running-history />
   </div>
 </template>

@@ -1,14 +1,23 @@
 <template>
-  <div class="d-flex p-1 rounded-lg my-1 p-2 border border-success"> 
-    <p class="flex-fill mb-0">
-      {{ toFormatDate(run.date) }}
-    </p>
-    <p class="flex-fill mb-0">
-      {{ run.distance.toFixed(2) }} km
-    </p>
-    <p class="mb-0">
-      {{ run.calorie }} kcal
-    </p>
+  <div>
+    <div class="d-flex p-1 rounded-lg my-1 py-2"> 
+      <div class="flex-fill text-center mt-2 mb-0">
+        {{ toFormatDate(run.date) }}
+      </div>
+      <div class="flex-fill text-center mb-0">
+        <span class="run-item">
+          {{ run.distance.toFixed(2) }}
+        </span>
+        km
+      </div>
+      <div class="flex-fill text-center mb-0">
+        <span class="run-item">
+          {{ run.calorie }}
+        </span>
+        kcal
+      </div>
+    </div>
+    <hr class="my-1">
   </div>
 </template>
 
@@ -32,7 +41,7 @@ export default {
 </script>
 
 <style scoped>
-.history-item {
-  background-color: rgb(166, 219, 166);
+.run-item {
+  font-size: 1.5em;
 }
 </style>

@@ -17,27 +17,27 @@
           <font-awesome-icon :icon="['fas', 'align-justify']" />
         </template>
         <b-dropdown-item> 
-          <nuxt-link to="/meal">
+          <nuxt-link to="/meal" class="text-dark">
             <font-awesome-icon icon="utensils" />
             <a class="ml-2">食事</a>
           </nuxt-link>
         </b-dropdown-item>
         <hr class="my-1">
         <b-dropdown-item>
-          <nuxt-link to="/exercise">
+          <nuxt-link to="/exercise" class="text-dark">
             <font-awesome-icon icon="running" />
             <a class="ml-2">運動</a>
           </nuxt-link>
         </b-dropdown-item>
         <hr class="my-1">
         <b-dropdown-item>
-          <nuxt-link to="/profile">
+          <nuxt-link to="/profile" class="text-dark">
             <font-awesome-icon icon="user-circle" />
             <a class="ml-2">アカウント</a>
           </nuxt-link>
         </b-dropdown-item>
         <hr class="my-1">
-        <b-dropdown-item @click="logout">
+        <b-dropdown-item class="text-dark" @click="logout">
           <font-awesome-icon icon="sign-out-alt" />
           <a class="ml-2">ログアウト</a>
         </b-dropdown-item>
