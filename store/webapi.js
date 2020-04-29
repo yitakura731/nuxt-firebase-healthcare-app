@@ -5,7 +5,8 @@ export const state = () => ({
   visionResp: null,
   calorie: null,
   newFood: null,
-  onRunning: false,
+  runResp: null,
+  onRunning: 'STOP',
   runs: [],
   foods: []
 });
@@ -16,6 +17,9 @@ export const mutations = {
   },
   visionResp(state, visionResp) {
     state.visionResp = visionResp;
+  },
+  runResp(state, runResp) {
+    state.runResp = runResp;
   },
   calorie(state, calorie) {
     state.calorie = calorie;
@@ -37,6 +41,9 @@ export const getters = {
   },
   visionResp: state => {
     return state.visionResp;
+  },
+  runResp: state => {
+    return state.runResp;
   },
   calorie: state => {
     return state.calorie;

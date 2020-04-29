@@ -6,7 +6,7 @@
         HC Demo App
       </div>
     </div>
-    <div v-if="onRunning">
+    <div v-if="onRunning != 'STOP'">
       <div class="mr-3">
         <font-awesome-icon :icon="['fas', 'running']" />
       </div>

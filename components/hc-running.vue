@@ -1,35 +1,9 @@
 <template>
-  <div class="mt-2">
-    <div class="d-flex">
-      <div class="flex-fill">
-        <div class="w-100 text-center">
-          <small class="mb-0">
-            時間
-          </small>
-        </div>
-        <div class="w-100 text-center">
-          <h2 class="mb-0">
-            {{ toFormatString(new Date(stopWatch)) }}
-          </h2>
-        </div>
-      </div>
-      <div class="flex-fill">
-        <div class="w-100 text-center">
-          <small class="mb-0">
-            距離(km)
-          </small>
-        </div>
-        <div class="w-100 text-center">
-          <h2 class="mb-0">
-            {{ distance.toFixed(2) }}
-          </h2>
-        </div>
-      </div>
-    </div>
-    <hc-map @updatedDistance="updatedDistance" />
-    <div class="d-flex px-5 py-1">
+  <div>
+    <hc-running-map />
+    <div class="d-flex px-5 my-2">
       <b-button 
-        v-if="!timerOn"
+        v-if="onRunning !== 'RUNNING'"
         pill
         class="flex-fill bg-success border-0" 
         @click="startRun()"
@@ -38,16 +12,24 @@
         走る
       </b-button>
       <b-button 
-        v-if="timerOn"
+        v-else
         pill
         class="flex-fill bg-warning border-0" 
-        @click="stopRun()"
+        @click="pendingRun()"
       >
         <font-awesome-icon :icon="['fas', 'running']" />
         止まる
       </b-button>
     </div>
-    <div v-if="onRunning && !timerOn" class="border m-1 rounded">
+    <div v-if="onRunning == 'STOP'" class="m-1 bg-light border rounded">
+      <div 
+        class="d-flex justify-content-center align-items-center" 
+        style="height: 100px"
+      >
+        マラソンを開始してください
+      </div>
+    </div>
+    <div v-else-if="onRunning == 'PENDING' && runResp != null" class="m-1 border rounded">
       <div class="d-flex">
         <div class="flex-fill">
           <div class="w-100 text-center">
@@ -57,7 +39,7 @@
           </div>
           <div class="w-100 text-center">
             <h2 class="mb-0">
-              {{ runnedDistance.toFixed(2) }}
+              {{ runResp.distance.toFixed(2) }}
             </h2>
           </div>
         </div>
@@ -69,104 +51,80 @@
           </div>
           <div class="w-100 text-center">
             <h2 class="mb-0">
-              {{ calorie }}
+              {{ runResp.calorie }}
             </h2>
           </div>
         </div>
       </div>
       <div class="d-flex mt-1">
-        <b-button variant="secondary" class="flex-fill m-1" @click="reset()">
+        <b-button variant="secondary" class="flex-fill m-1" @click="resetRun()">
           <a>取り消し</a>
         </b-button>
-        <b-button variant="success" class="flex-fill m-1" @click="regist()">
+        <b-button variant="success" class="flex-fill m-1" @click="registRun()">
           <a>登録</a>
         </b-button>
       </div>
     </div>
-    <div v-else>
+    <div v-else class="m-1 bg-success border rounded">
       <div 
-        class="m-2 p-1 border rounded bg-light d-flex justify-content-center align-items-center" 
+        class="d-flex justify-content-center align-items-center" 
         style="height: 100px"
       >
-        マラソンを開始してください
+        マラソン中
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import HCMap from '~/components/hc-map.vue';
+import HCRunningMap from '~/components/hc-running-map.vue';
 import firebase from '@/plugins/firebase';
 
 export default {
   components: {
-    'hc-map': HCMap
+    'hc-running-map': HCRunningMap
   },
   data() {
     return {
-      stopWatch: Date.parse('2018/01/01 00:00:00'),
-      distance: 0,
-      runnedDistance: 0,
-      calorie: 0,
-      currUser: {},
-      timerObj: null,
-      timerOn: false
+      userId: null,
+      error: null
     };
   },
   computed: {
     onRunning() {
       return this.$store.state.webapi.onRunning;
+    },
+    runResp() {
+      return this.$store.state.webapi.runResp;
     }
   },
   mounted() {
     firebase.auth().onAuthStateChanged(user => {
       if (user) {
         this.$store.dispatch('webapi/getCurrentUser', user.uid).then(user => {
-          this.currUser.weight = user.weight;
-          this.currUser.id = user.id;
+          this.userId = user.id;
         });
       }
     });
   },
   methods: {
-    regist() {
-      this.$store.dispatch('webapi/registRun', {
-        userId: this.currUser.id,
-        date: new Date(),
-        distance: this.runnedDistance,
-        calorie: this.calorie
-      });
-      this.reset();
-    },
-    reset() {
-      clearInterval(this.timerObj);
-      this.stopWatch = Date.parse('2018/01/01 00:00:00');
-      this.distance = 0;
-      this.calorie = 0;
-      this.$store.commit('webapi/onRunning', false);
-    },
-    updatedDistance(payload) {
-      this.distance = payload;
-    },
     startRun() {
-      const self = this;
-      this.timerObj = setInterval(() => {
-        self.stopWatch += 1000;
-      }, 1000);
-      this.timerOn = true;
-      this.$store.commit('webapi/onRunning', true);
+      this.$store.commit('webapi/onRunning', 'RUNNING');
     },
-    stopRun() {
-      clearInterval(this.timerObj);
-      this.timerOn = false;
-      this.runnedDistance = this.distance;
-      this.calorie = Math.round(this.runnedDistance * this.currUser.weight);
+    pendingRun() {
+      this.$store.commit('webapi/onRunning', 'PENDING');
     },
-    toFormatString(date) {
-      const hour = ('0' + date.getHours()).slice(-2);
-      const min = ('0' + date.getMinutes()).slice(-2);
-      const sec = ('0' + date.getSeconds()).slice(-2);
-      return `${hour}:${min}:${sec}`;
+    registRun() {
+      this.$store.dispatch('webapi/registRun', {
+        userId: this.userId,
+        date: new Date(),
+        distance: this.runResp.distance,
+        calorie: this.runResp.calorie
+      });
+      this.$store.commit('webapi/onRunning', 'STOP');
+    },
+    resetRun() {
+      this.$store.commit('webapi/onRunning', 'STOP');
     }
   }
 };

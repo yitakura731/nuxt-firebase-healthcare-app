@@ -1,5 +1,31 @@
 <template>
-  <div class="p-2">
+  <div class="p-1">
+    <div class="d-flex mb-2">
+      <div class="flex-fill">
+        <div class="w-100 text-center">
+          <small class="mb-0">
+            時間
+          </small>
+        </div>
+        <div class="w-100 text-center">
+          <h2 class="mb-0">
+            {{ toFormatString(new Date(stopWatch)) }}
+          </h2>
+        </div>
+      </div>
+      <div class="flex-fill">
+        <div class="w-100 text-center">
+          <small class="mb-0">
+            距離(km)
+          </small>
+        </div>
+        <div class="w-100 text-center">
+          <h2 class="mb-0">
+            {{ distance.toFixed(2) }}
+          </h2>
+        </div>
+      </div>
+    </div>
     <div class="d-flex flex-column align-items-center">
       <GmapMap
         ref="gmap"
@@ -31,19 +57,23 @@
 </template>
 
 <script>
+import firebase from '@/plugins/firebase';
+
 export default {
   data() {
     return {
-      error: null,
-      location: { lng: 0, lat: 0 },
+      stopWatch: Date.parse('2018/01/01 00:00:00'),
+      userWeight: 0,
       distance: 0,
+      timerObj: null,
+      location: { lng: 0, lat: 0 },
       paths: [],
       icon: {
         url: require('@/static/circle.png'),
         size: { width: 20, height: 20, f: 'px', b: 'px' },
         scaledSize: { width: 20, height: 20, f: 'px', b: 'px' }
       },
-      timerObj: null
+      error: null
     };
   },
   computed: {
@@ -53,9 +83,30 @@ export default {
   },
   watch: {
     onRunning(newVal, oldVal) {
-      if (!newVal && oldVal) {
+      if (
+        (newVal === 'RUNNING' && oldVal === 'PENDING') ||
+        (newVal === 'RUNNING' && oldVal === 'STOP')
+      ) {
+        const self = this;
+        this.timerObj = setInterval(() => {
+          self.stopWatch += 1000;
+        }, 1000);
+      } else if (newVal === 'PENDING' && oldVal === 'RUNNING') {
+        clearInterval(this.timerObj);
+        this.$store.commit('webapi/runResp', {
+          distance: this.distance,
+          calorie: Math.round(this.distance * this.userWeight)
+        });
+      } else if (
+        (newVal === 'STOP' && oldVal === 'RUNNING') ||
+        (newVal === 'STOP' && oldVal === 'PENDING')
+      ) {
+        clearInterval(this.timerObj);
+        this.$store.commit('webapi/runResp', null);
+        this.stopWatch = Date.parse('2018/01/01 00:00:00');
         this.distance = 0;
         this.paths = [];
+        this.timerOn = false;
       }
     }
   },
@@ -65,6 +116,13 @@ export default {
       this.errorPosition,
       { enableHighAccuracy: true }
     );
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        this.$store.dispatch('webapi/getCurrentUser', user.uid).then(user => {
+          this.userWeight = user.weight;
+        });
+      }
+    });
   },
   methods: {
     successPosition(position) {
@@ -75,7 +133,7 @@ export default {
       if (this.$refs.gmap) {
         this.$refs.gmap.$mapPromise.then(map => {
           map.panTo(this.location);
-          if (this.onRunning) {
+          if (this.onRunning === 'RUNNING') {
             this.paths.push({ lat, lng });
             if (this.paths.length > 1) {
               const dist = this.getDistance(
@@ -85,7 +143,6 @@ export default {
                 this.paths[this.paths.length - 2].lng
               );
               this.distance += dist;
-              this.$emit('updatedDistance', this.distance);
             }
           }
         });
@@ -106,6 +163,12 @@ export default {
             Math.sin(lat1) * Math.sin(lat2)
         )
       );
+    },
+    toFormatString(date) {
+      const hour = ('0' + date.getHours()).slice(-2);
+      const min = ('0' + date.getMinutes()).slice(-2);
+      const sec = ('0' + date.getSeconds()).slice(-2);
+      return `${hour}:${min}:${sec}`;
     }
   }
 };
