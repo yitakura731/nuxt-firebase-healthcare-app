@@ -1,12 +1,13 @@
 <template>
   <div class="p-2 mb-3">
-    <div v-if="newFood != null" class="p-1 border rounded">
+    <hc-food-camera />
+    <div v-if="visionResp != null" class="p-1 border rounded">
       <div class="d-flex align-items-center" style="height: 60px">
         <span class="flex-fill ml-1">
-          {{ newFood.name }}
+          {{ visionResp.newFood.name }}
         </span>
         <h4 class="text-info mb-0">
-          {{ newFood.calorie }}
+          {{ visionResp.newFood.calorie }}
         </h4>
         <div class="mx-2 mt-2">
           kcal
@@ -36,10 +37,12 @@
     </div>
     <hc-vision-detail />
     <hc-site />
+    </hc-food-camera>
   </div>
 </template>
 
 <script>
+import HCFoodCamera from '~/components/hc-food-camera.vue';
 import HCVisionDetail from '~/components/hc-vision-detail.vue';
 import HCSite from '~/components/hc-site.vue';
 import firebase from '@/plugins/firebase';
@@ -47,6 +50,7 @@ import firebase from '@/plugins/firebase';
 export default {
   components: {
     'hc-vision-detail': HCVisionDetail,
+    'hc-food-camera': HCFoodCamera,
     'hc-site': HCSite
   },
   data() {
@@ -55,8 +59,8 @@ export default {
     };
   },
   computed: {
-    newFood() {
-      return this.$store.state.webapi.newFood;
+    visionResp() {
+      return this.$store.state.webapi.visionResp;
     }
   },
   mounted() {
@@ -73,8 +77,8 @@ export default {
       this.$store.dispatch('webapi/registFoods', {
         userId: this.userId,
         date: new Date(),
-        name: this.newFood.name,
-        calorie: this.newFood.calorie
+        name: this.visionResp.newFood.name,
+        calorie: this.visionResp.newFood.calorie
       });
     }
   }

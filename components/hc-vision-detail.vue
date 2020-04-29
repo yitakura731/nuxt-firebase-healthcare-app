@@ -87,54 +87,6 @@ export default {
       return retVal;
     }
   },
-  watch: {
-    visionResp(newVal, oldVal) {
-      let calorie = null;
-      let name = null;
-      if (newVal != null) {
-        if (newVal.hitwords.validWords.length > 0) {
-          calorie = newVal.hitwords.validWords[0].text.replace('kcal', '');
-          this.$store.commit('webapi/newFood', {
-            name: 'Food Label',
-            calorie
-          });
-        } else {
-          let keyword = '';
-          if (newVal.objects.length > 0) {
-            keyword = newVal.objects[0].name;
-          }
-          this.$store
-            .dispatch('webapi/getCalorie', keyword)
-            .then(response => {
-              if (response.data.length > 0) {
-                calorie = response.data[0].energ_kcal;
-                name = response.data[0].shrt_desc;
-                this.$store.commit('webapi/newFood', {
-                  name,
-                  calorie
-                });
-              } else {
-                this.$store.commit('webapi/newFood', {
-                  name: 'Unknown',
-                  calorie: 'N/A'
-                });
-              }
-            })
-            .catch(err => {
-              if (
-                err.response != null &&
-                err.response.data != null &&
-                err.response.data.error != null
-              ) {
-                this.error = 'calorie API Error : ' + err.response.data.error;
-              } else {
-                this.error = err;
-              }
-            });
-        }
-      }
-    }
-  },
   methods: {
     getDatasets() {
       return {

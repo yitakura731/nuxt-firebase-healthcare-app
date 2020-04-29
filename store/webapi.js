@@ -3,8 +3,6 @@ const db = firebase.firestore();
 
 export const state = () => ({
   visionResp: null,
-  calorie: null,
-  newFood: null,
   runResp: null,
   onRunning: 'STOP',
   runs: [],
@@ -12,47 +10,38 @@ export const state = () => ({
 });
 
 export const mutations = {
-  onRunning(state, onRunning) {
-    state.onRunning = onRunning;
-  },
   visionResp(state, visionResp) {
     state.visionResp = visionResp;
   },
   runResp(state, runResp) {
     state.runResp = runResp;
   },
-  calorie(state, calorie) {
-    state.calorie = calorie;
+  onRunning(state, onRunning) {
+    state.onRunning = onRunning;
   },
   runs(state, runs) {
     state.runs = runs;
   },
   foods(state, foods) {
     state.foods = foods;
-  },
-  newFood(state, newFood) {
-    state.newFood = newFood;
   }
 };
 
 export const getters = {
-  onRunning: state => {
-    return state.onRunning;
-  },
   visionResp: state => {
     return state.visionResp;
   },
   runResp: state => {
     return state.runResp;
   },
-  calorie: state => {
-    return state.calorie;
+  onRunning: state => {
+    return state.onRunning;
+  },
+  runs: state => {
+    return state.runs;
   },
   foods: state => {
     return state.foods;
-  },
-  newFoodods: state => {
-    return state.newFood;
   }
 };
 

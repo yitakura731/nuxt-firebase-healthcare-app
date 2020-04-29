@@ -6,7 +6,6 @@
           <font-awesome-icon :icon="['fas', 'camera']" />
           <a class="ml-1">カロリー計測</a>
         </template>
-        <hc-camera />
         <hc-food />
       </b-tab>
       <b-tab title-link-class="text-dark">
@@ -22,14 +21,12 @@
 
 <script>
 import HCFoodHistory from '~/components/hc-food-history.vue';
-import HCCamera from '~/components/hc-camera.vue';
 import HCFood from '~/components/hc-food.vue';
 
 export default {
   layout: 'main',
   components: {
     'hc-food-history': HCFoodHistory,
-    'hc-camera': HCCamera,
     'hc-food': HCFood
   }
 };

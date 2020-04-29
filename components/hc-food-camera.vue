@@ -1,5 +1,5 @@
 <template>
-  <div class="pt-2 d-flex flex-column align-items-center">
+  <div class="d-flex flex-column align-items-center mb-3">
     <div class="hc-camera-root d-flex flex-column align-items-center">
       <video ref="video" class="hc-video" autoplay playsinline />
       <div v-show="captured">
@@ -48,7 +48,6 @@ export default {
   methods: {
     reset() {
       this.$store.commit('webapi/visionResp', null);
-      this.$store.commit('webapi/newFood', null);
       this.captured = false;
     },
     capture() {
@@ -58,11 +57,11 @@ export default {
       ctx.drawImage(this.video, 0, 0, 340, 340);
       const imgData = this.canvas.toDataURL('image/webp').split(',')[1];
       this.$store.commit('webapi/visionResp', null);
+      const retVal = {};
       this.$store
         .dispatch('webapi/execGoogleVisionApi', imgData)
         .then(apiResp => {
-          const retVal = {};
-          // Localized object detection
+          // Fetch localized object detection result
           if (apiResp.responses[0].localizedObjectAnnotations != null) {
             retVal.objects = this.parseObjectLocalization(
               apiResp.responses[0].localizedObjectAnnotations,
@@ -71,7 +70,7 @@ export default {
           } else {
             retVal.objects = [];
           }
-          // Label Detection
+          // Fetch label detection result
           if (apiResp.responses[0].labelAnnotations != null) {
             retVal.labels = this.parseLabelAnnotation(
               apiResp.responses[0].labelAnnotations
@@ -79,7 +78,7 @@ export default {
           } else {
             retVal.labels = [];
           }
-          // Text Detection
+          // Fetch text Detection result
           if (apiResp.responses[0].textAnnotations != null) {
             retVal.hitwords = this.parseTextAnnotation(
               apiResp.responses[0].textAnnotations,
@@ -91,10 +90,48 @@ export default {
               inValidWords: []
             };
           }
+
+          if (retVal.hitwords.validWords.length > 0) {
+            const calorie = retVal.hitwords.validWords[0].text.replace(
+              'kcal',
+              ''
+            );
+            retVal.newFood = {
+              name: 'Food Label',
+              calorie
+            };
+            this.$store.commit('webapi/visionResp', retVal);
+          } else {
+            let keyword = '';
+            if (retVal.objects.length > 0) {
+              keyword = retVal.objects[0].name;
+            }
+            return this.$store.dispatch('webapi/getCalorie', keyword);
+          }
+        })
+        .then(response => {
+          if (response.data.length > 0) {
+            const calorie = response.data[0].energ_kcal;
+            const name = response.data[0].shrt_desc;
+            retVal.newFood = { name, calorie };
+          } else {
+            retVal.newFood = {
+              name: 'Unknown',
+              calorie: 'N/A'
+            };
+          }
           this.$store.commit('webapi/visionResp', retVal);
         })
         .catch(err => {
-          this.error = err;
+          if (
+            err.response != null &&
+            err.response.data != null &&
+            err.response.data.error != null
+          ) {
+            this.error = 'calorie API Error : ' + err.response.data.error;
+          } else {
+            this.error = err;
+          }
         });
     },
     parseObjectLocalization(response, canvas) {
