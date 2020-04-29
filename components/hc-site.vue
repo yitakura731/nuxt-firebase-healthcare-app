@@ -1,17 +1,19 @@
 <template>
-  <div v-if="visionResp != null" class="p-2">
-    <div v-if="sites.length > 0">
-      <div v-for="(site, index) in sites" :key="site.index">
-        <hc-site-item :site="site" :index="index" />
+  <b-modal id="site-modal" hide-header ok-only scrollable ok-title="閉じる">
+    <div v-if="visionResp != null" class="p-2">
+      <div v-if="sites.length > 0">
+        <div v-for="(site, index) in sites" :key="site.index">
+          <hc-site-item :site="site" :index="index" />
+        </div>
       </div>
+      <div v-if="sites.length === 0" class="my-2 text-center">
+        キーワードの商品がヒットしませんでした
+      </div>
+      <b-alert variant="warning" :show="error != null" class="text-center">
+        {{ error }}
+      </b-alert>
     </div>
-    <div v-if="sites.length === 0" class="my-2 text-center">
-      キーワードの商品がヒットしませんでした
-    </div>
-    <b-alert variant="warning" :show="error != null" class="text-center">
-      {{ error }}
-    </b-alert>
-  </div>
+  </b-modal>
 </template>>
 
 <script>

@@ -1,73 +1,81 @@
 <template>
-  <div class="py-1 px-3 mb-3">
-    <div v-if="newFood != null" class="d-flex mb-1">
-      <div class="w-75">
-        <h6 class="mb-1">
+  <div class="p-2 mb-3">
+    <div v-if="newFood != null" class="p-1 border rounded">
+      <div class="d-flex align-items-center" style="height: 60px">
+        <span class="flex-fill ml-1">
           {{ newFood.name }}
-        </h6>
-        <div class="d-flex">
-          <div class="flex-fill border rounded bg-white text-info p-1">
-            <h4 class="text-center mb-0">
-              {{ newFood.calorie }}
-            </h4>
-          </div>
-          <span class="ml-1 mr-2 d-flex align-items-end">
-            <h5 class="mb-0">kcal</h5>
-          </span>
+        </span>
+        <h4 class="text-info mb-0">
+          {{ newFood.calorie }}
+        </h4>
+        <div class="mx-2 mt-2">
+          kcal
         </div>
       </div>
-      <b-button pill variant="info" class="mt-3 ml-3" @click="regist()">
-        <a>登録</a>
-      </b-button>
-    </div>
-
-    <b-tabs class="mt-4" fill>
-      <b-tab>
-        <template v-slot:title>
-          <font-awesome-icon :icon="['fas', 'chart-bar']" />
-          <a class="ml-1">履歴</a>
-        </template>
-        <hc-food-history />
-      </b-tab>
-
-      <b-tab>
-        <template v-slot:title>
+      <div class="d-flex">
+        <b-button v-b-modal.vision-detail-modal variant="secondary" class="flex-fill m-1">
           <font-awesome-icon :icon="['fas', 'glasses']" />
-          <a class="ml-1">詳細</a>
-        </template>
-        <hc-vision-detail />
-      </b-tab>
-
-      <b-tab>
-        <template v-slot:title>
+          詳細
+        </b-button>
+        <b-button v-b-modal.site-modal variant="danger" class="flex-fill m-1">
           <font-awesome-icon :icon="['fas', 'registered']" />
-          <a class="ml-1">楽天</a>
-        </template>
-        <hc-site />
-      </b-tab>
-    </b-tabs>
+          楽天
+        </b-button>
+        <b-button variant="success" class="flex-fill m-1" @click="regist()">
+          登録
+        </b-button>
+      </div>
+    </div>
+    <div v-else>
+      <div 
+        class="mt-1 p-1 border rounded bg-light d-flex justify-content-center align-items-center" 
+        style="height: 116px"
+      >
+        撮影してください
+      </div>
+    </div>
+    <hc-vision-detail />
+    <hc-site />
   </div>
 </template>
 
 <script>
-import HCFoodHistory from '~/components/hc-food-history.vue';
 import HCVisionDetail from '~/components/hc-vision-detail.vue';
 import HCSite from '~/components/hc-site.vue';
+import firebase from '@/plugins/firebase';
 
 export default {
   components: {
-    'hc-food-history': HCFoodHistory,
     'hc-vision-detail': HCVisionDetail,
     'hc-site': HCSite
+  },
+  data() {
+    return {
+      userId: null
+    };
   },
   computed: {
     newFood() {
       return this.$store.state.webapi.newFood;
     }
   },
+  mounted() {
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        this.$store.dispatch('webapi/getCurrentUser', user.uid).then(user => {
+          this.userId = user.id;
+        });
+      }
+    });
+  },
   methods: {
     regist() {
-      this.$store.dispatch('webapi/registFoods', this.newFood);
+      this.$store.dispatch('webapi/registFoods', {
+        userId: this.userId,
+        date: new Date(),
+        name: this.newFood.name,
+        calorie: this.newFood.calorie
+      });
     }
   }
 };

@@ -1,12 +1,18 @@
 <template>
   <div>
-    <div class="d-flex p-1"> 
-      <p class="flex-fill mb-0">
+    <div class="d-flex p-1 my-1 py-2">
+      <div class="flex-fill text-center mb-0 mt-2">
+        {{ toFormatDate(food.date) }}
+      </div>
+      <div class="flex-fill text-center mb-0 mt-2 ml-2">
         {{ food.name }}
-      </p>
-      <p class="mb-0">
-        {{ food.calorie }} kcal
-      </p>
+      </div>
+      <div class="flex-fill text-center mb-0 ml-2">
+        <span class="food-item">
+          {{ food.calorie }}
+        </span>
+        kcal
+      </div>
     </div>
     <hr class="my-1">
   </div>
@@ -24,9 +30,15 @@ export default {
     }
   },
   methods: {
-    toFormatString(date) {
-      return `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}`;
+    toFormatDate(date) {
+      return this.$moment(date).format('YYYY/MM/DD');
     }
   }
 };
 </script>
+
+<style scoped>
+.food-item {
+  font-size: 1.5em;
+}
+</style>

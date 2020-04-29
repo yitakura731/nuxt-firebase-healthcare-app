@@ -1,17 +1,19 @@
 <template>
-  <div class="py-2 d-flex flex-column align-items-center">
+  <div class="pt-2 d-flex flex-column align-items-center">
     <div class="hc-camera-root d-flex flex-column align-items-center">
       <video ref="video" class="hc-video" autoplay playsinline />
       <div v-show="captured">
         <canvas ref="canvas" height="340px" width="340px" class="hc-canvas" />
       </div>
     </div>
-    <div class="mt-3 d-flex">
-      <b-button pill class="bg-success border-0 hc-button mr-1" @click="capture()">
+    <div v-if="!captured" class="w-100 mt-3 d-flex justify-content-center">
+      <b-button pill class="bg-success border-0 w-75" @click="capture()">
         <font-awesome-icon :icon="['fas', 'utensils']" />
         これ食べた！
       </b-button>
-      <b-button pill class="bg-secoundary border-0 hc-button ml-1" @click="reset()">
+    </div>
+    <div v-else class="w-100 mt-3 d-flex justify-content-center">
+      <b-button pill class="bg-secoundary border-0 w-75" @click="reset()">
         もう一度！
       </b-button>
     </div>
@@ -197,9 +199,5 @@ export default {
   top: 0px;
   left: 0px;
   border: 5px solid lightgreen;
-}
-
-.hc-button {
-  width: 160px;
 }
 </style>

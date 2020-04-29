@@ -1,8 +1,11 @@
 <template>
   <div v-if="runs != null && runs.length > 0">
+    <div class="mt-2 ml-2">
+      <h6>最近のランニング</h6>
+    </div>
     <hc-running-chart
       :data="runs"
-      :height="300"
+      :height="400"
       class="border rounded bg-light mx-1 mt-1 mb-3"
     />
     <hr class="my-1">

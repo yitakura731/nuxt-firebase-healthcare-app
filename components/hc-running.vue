@@ -1,5 +1,5 @@
 <template>
-  <div class="p-1">
+  <div class="mt-2">
     <div class="d-flex">
       <div class="flex-fill">
         <div class="w-100 text-center">
@@ -47,54 +47,60 @@
         止まる
       </b-button>
     </div>
-    <div v-if="onRunning && !timerOn" class="d-flex border m-1 rounded">
-      <div class="flex-fill">
-        <div class="w-100 text-center">
-          <small class="mb-0">
-            走行距離(km)
-          </small>
+    <div v-if="onRunning && !timerOn" class="border m-1 rounded">
+      <div class="d-flex">
+        <div class="flex-fill">
+          <div class="w-100 text-center">
+            <small class="mb-0">
+              走行距離(km)
+            </small>
+          </div>
+          <div class="w-100 text-center">
+            <h2 class="mb-0">
+              {{ runnedDistance.toFixed(2) }}
+            </h2>
+          </div>
         </div>
-        <div class="w-100 text-center">
-          <h2 class="mb-0">
-            {{ runnedDistance.toFixed(2) }}
-          </h2>
+        <div class="flex-fill">
+          <div class="w-100 text-center">
+            <small class="mb-0">
+              消費カロリー(kcal)
+            </small>
+          </div>
+          <div class="w-100 text-center">
+            <h2 class="mb-0">
+              {{ calorie }}
+            </h2>
+          </div>
         </div>
       </div>
-      <div class="flex-fill">
-        <div class="w-100 text-center">
-          <small class="mb-0">
-            消費カロリー(kcal)
-          </small>
-        </div>
-        <div class="w-100 text-center">
-          <h2 class="mb-0">
-            {{ calorie }}
-          </h2>
-        </div>
-      </div>
-      <div class="p-2">
-        <b-button pill variant="info" class="mt-3" @click="regist()">
+      <div class="d-flex mt-1">
+        <b-button variant="secondary" class="flex-fill m-1" @click="reset()">
+          <a>取り消し</a>
+        </b-button>
+        <b-button variant="success" class="flex-fill m-1" @click="regist()">
           <a>登録</a>
         </b-button>
       </div>
     </div>
-
-    <h6 class="pl-1 pt-3">
-      <bold>最近のランニング</bold>
-    </h6>
-    <hc-running-history />
+    <div v-else>
+      <div 
+        class="m-2 p-1 border rounded bg-light d-flex justify-content-center align-items-center" 
+        style="height: 100px"
+      >
+        マラソンを開始してください
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 import HCMap from '~/components/hc-map.vue';
-import HcRunningHistory from '~/components/hc-running-history.vue';
 import firebase from '@/plugins/firebase';
 
 export default {
   components: {
-    'hc-map': HCMap,
-    'hc-running-history': HcRunningHistory
+    'hc-map': HCMap
   },
   data() {
     return {
@@ -130,6 +136,9 @@ export default {
         distance: this.runnedDistance,
         calorie: this.calorie
       });
+      this.reset();
+    },
+    reset() {
       clearInterval(this.timerObj);
       this.stopWatch = Date.parse('2018/01/01 00:00:00');
       this.distance = 0;

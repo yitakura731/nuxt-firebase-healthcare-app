@@ -76,6 +76,27 @@ export const actions = {
   },
   async registFoods({ dispatch }, food) {
     await db.collection('meals').add(food);
+    await dispatch('fetchFoods', food);
+  },
+  async fetchFoods({ commit }, arg) {
+    const snapshot = await db
+      .collection('meals')
+      .where('userId', '==', arg.userId)
+      .orderBy('date', 'desc')
+      .get();
+    const retVal = [];
+    if (!snapshot.empty) {
+      snapshot.docs.forEach(food => {
+        if (food.exists) {
+          retVal.push({
+            date: food.data().date.toDate(),
+            name: food.data().name,
+            calorie: food.data().calorie
+          });
+        }
+      });
+    }
+    commit('foods', retVal);
   },
   async getCurrentUser(context, uid) {
     const snapshot = await db
