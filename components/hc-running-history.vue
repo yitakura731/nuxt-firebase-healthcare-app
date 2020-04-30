@@ -3,7 +3,7 @@
     <div class="mt-2 ml-2">
       <h6>最近のランニング</h6>
     </div>
-    <hc-running-chart
+    <hc-calorie-chart
       :data="runs"
       :height="400"
       class="border rounded bg-light mx-1 mt-1 mb-3"
@@ -16,14 +16,14 @@
 </template>>
 
 <script>
-import HcRunningChart from '~/components/hc-running-chart.vue';
+import HcCalorieChart from '~/components/hc-calorie-chart.vue';
 import HcRunningHistoryItem from '~/components/hc-running-history-item.vue';
 import firebase from '@/plugins/firebase';
 
 export default {
   components: {
     'hc-running-history-item': HcRunningHistoryItem,
-    'hc-running-chart': HcRunningChart
+    'hc-calorie-chart': HcCalorieChart
   },
   computed: {
     runs() {

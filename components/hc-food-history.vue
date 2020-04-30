@@ -3,7 +3,7 @@
     <div class="mt-2 ml-2">
       <h6>最近のカロリー</h6>
     </div>
-    <hc-food-chart
+    <hc-calorie-chart
       :data="foods"
       :height="400"
       class="border rounded bg-light mx-1 mt-1 mb-3"
@@ -16,13 +16,13 @@
 </template>>
 
 <script>
-import HcFoodChart from '~/components/hc-food-chart.vue';
+import HcCalorieChart from '~/components/hc-calorie-chart.vue';
 import HcFoodHistoryItem from '~/components/hc-food-history-item.vue';
 import firebase from '@/plugins/firebase';
 
 export default {
   components: {
-    'hc-food-chart': HcFoodChart,
+    'hc-calorie-chart': HcCalorieChart,
     'hc-food-history-item': HcFoodHistoryItem
   },
   computed: {
