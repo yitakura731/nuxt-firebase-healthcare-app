@@ -33,6 +33,7 @@
           class="flex-fill m-1" 
           @click="regist()"
         >
+          <font-awesome-icon :icon="['fas', 'cloud-upload-alt']" />
           登録
         </b-button>
       </div>

@@ -69,7 +69,12 @@
         </div>
       </div>
       <div class="d-flex mt-1">
+        <b-button variant="danger" class="flex-fill m-1">
+          <font-awesome-icon :icon="['fas', 'registered']" />
+          <a>楽天</a>
+        </b-button>
         <b-button variant="success" class="flex-fill m-1" @click="registRun()">
+          <font-awesome-icon :icon="['fas', 'cloud-upload-alt']" />
           <a>登録</a>
         </b-button>
       </div>
