@@ -1,6 +1,6 @@
 <template>
   <div class="p-1">
-    <b-tabs class="mt-2" fill>
+    <b-tabs class="mt-1" fill>
       <b-tab title-link-class="text-dark">
         <template v-slot:title>
           <font-awesome-icon :icon="['fas', 'camera']" />

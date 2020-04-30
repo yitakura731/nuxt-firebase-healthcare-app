@@ -1,24 +1,36 @@
 <template>
   <div>
     <hc-running-map />
-    <div class="d-flex px-5 my-2">
+    <div class="d-flex px-5 my-1">
       <b-button 
         v-if="onRunning !== 'RUNNING'"
         pill
-        class="flex-fill bg-success border-0" 
+        variant="success"
+        class="flex-fill border-0" 
         @click="startRun()"
       >
         <font-awesome-icon :icon="['fas', 'running']" />
         走る
       </b-button>
       <b-button 
-        v-else
+        v-if="onRunning === 'RUNNING'"
         pill
-        class="flex-fill bg-warning border-0" 
+        variant="warning" 
+        class="flex-fill border-0" 
         @click="pendingRun()"
       >
-        <font-awesome-icon :icon="['fas', 'running']" />
+        <font-awesome-icon :icon="['fas', 'walking']" />
         止まる
+      </b-button>
+      <b-button 
+        v-if="onRunning === 'PENDING'"
+        pill
+        variant="secondary" 
+        class="flex-fill border-0 ml-1" 
+        @click="stopRun()"
+      >
+        <font-awesome-icon :icon="['fas', 'stop-circle']" />
+        終わる
       </b-button>
     </div>
     <div v-if="onRunning == 'STOP'" class="m-1 bg-light border rounded">
@@ -57,20 +69,25 @@
         </div>
       </div>
       <div class="d-flex mt-1">
-        <b-button variant="secondary" class="flex-fill m-1" @click="resetRun()">
-          <a>取り消し</a>
-        </b-button>
         <b-button variant="success" class="flex-fill m-1" @click="registRun()">
           <a>登録</a>
         </b-button>
       </div>
+      <b-alert variant="success" :show="successRegist" class="my-1 mx-2 p-1 text-center">
+        登録に成功しました
+      </b-alert>
+      <b-alert variant="warning" :show="error != null" class="my-1 mx-2 p-1 text-center">
+        {{ error }}
+      </b-alert>
     </div>
-    <div v-else class="m-1 bg-success border rounded">
+    <div v-else class="m-1 running-area border rounded">
       <div 
         class="d-flex justify-content-center align-items-center" 
         style="height: 100px"
       >
+        <font-awesome-icon :icon="['fas', 'running']" class="mr-2" />
         マラソン中
+        <b-spinner label="Loading..." variant="success" class="ml-2" />
       </div>
     </div>
   </div>
@@ -87,6 +104,7 @@ export default {
   data() {
     return {
       userId: null,
+      successRegist: false,
       error: null
     };
   },
@@ -96,6 +114,14 @@ export default {
     },
     runResp() {
       return this.$store.state.webapi.runResp;
+    }
+  },
+  watch: {
+    runResp(newVal, oldVal) {
+      if (!newVal) {
+        this.successRegist = false;
+        this.error = null;
+      }
     }
   },
   mounted() {
@@ -114,18 +140,38 @@ export default {
     pendingRun() {
       this.$store.commit('webapi/onRunning', 'PENDING');
     },
-    registRun() {
-      this.$store.dispatch('webapi/registRun', {
-        userId: this.userId,
-        date: new Date(),
-        distance: this.runResp.distance,
-        calorie: this.runResp.calorie
-      });
+    stopRun() {
       this.$store.commit('webapi/onRunning', 'STOP');
     },
-    resetRun() {
-      this.$store.commit('webapi/onRunning', 'STOP');
+    registRun() {
+      this.$store
+        .dispatch('webapi/registRun', {
+          userId: this.userId,
+          date: new Date(),
+          distance: this.runResp.distance,
+          calorie: this.runResp.calorie
+        })
+        .then(() => {
+          this.successRegist = true;
+        })
+        .catch(err => {
+          if (
+            err.response != null &&
+            err.response.data != null &&
+            err.response.data.error != null
+          ) {
+            this.error = 'Firebase Error : ' + err.response.data.error;
+          } else {
+            this.error = err;
+          }
+        });
     }
   }
 };
 </script>
+
+<style scoped>
+.running-area {
+  background-color: rgb(149, 211, 160);
+}
+</style>
