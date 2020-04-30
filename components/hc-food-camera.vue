@@ -92,21 +92,16 @@ export default {
           }
 
           if (retVal.hitwords.validWords.length > 0) {
-            const calorie = retVal.hitwords.validWords[0].text.replace(
-              'kcal',
-              ''
-            );
             retVal.newFood = {
-              name: 'Food Label',
-              calorie
+              name: 'Food label',
+              calorie: retVal.hitwords.validWords[0].text.replace('kcal', '')
             };
             this.$store.commit('webapi/visionResp', retVal);
-          } else {
-            let keyword = '';
-            if (retVal.objects.length > 0) {
-              keyword = retVal.objects[0].name;
-            }
-            return this.$store.dispatch('webapi/getCalorie', keyword);
+          } else if (retVal.objects.length > 0) {
+            return this.$store.dispatch(
+              'webapi/getCalorie',
+              retVal.objects[0].name
+            );
           }
         })
         .then(response => {
@@ -116,7 +111,7 @@ export default {
             retVal.newFood = { name, calorie };
           } else {
             retVal.newFood = {
-              name: 'Unknown',
+              name: retVal.objects[0].name,
               calorie: 'N/A'
             };
           }

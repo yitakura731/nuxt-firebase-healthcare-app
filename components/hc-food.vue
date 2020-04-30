@@ -18,14 +18,30 @@
           <font-awesome-icon :icon="['fas', 'glasses']" />
           詳細
         </b-button>
-        <b-button v-b-modal.site-modal variant="danger" class="flex-fill m-1">
+        <b-button 
+          v-b-modal.site-modal 
+          :disabled="visionResp.newFood.calorie === 'N/A'" 
+          variant="danger" 
+          class="flex-fill m-1"
+        >
           <font-awesome-icon :icon="['fas', 'registered']" />
           楽天
         </b-button>
-        <b-button variant="success" class="flex-fill m-1" @click="regist()">
+        <b-button 
+          variant="success" 
+          :disabled="visionResp.newFood.calorie === 'N/A'" 
+          class="flex-fill m-1" 
+          @click="regist()"
+        >
           登録
         </b-button>
       </div>
+      <b-alert variant="success" :show="successRegist" class="mt-2 text-center">
+        登録に成功しました
+      </b-alert>
+      <b-alert variant="warning" :show="error != null" class="mt-2 text-center">
+        {{ error }}
+      </b-alert>
     </div>
     <div v-else>
       <div 
@@ -37,7 +53,6 @@
     </div>
     <hc-vision-detail />
     <hc-site />
-    </hc-food-camera>
   </div>
 </template>
 
@@ -55,12 +70,22 @@ export default {
   },
   data() {
     return {
-      userId: null
+      successRegist: false,
+      userId: null,
+      error: null
     };
   },
   computed: {
     visionResp() {
       return this.$store.state.webapi.visionResp;
+    }
+  },
+  watch: {
+    visionResp(newVal, oldVal) {
+      if (!newVal) {
+        this.successRegist = false;
+        this.error = null;
+      }
     }
   },
   mounted() {
@@ -74,12 +99,27 @@ export default {
   },
   methods: {
     regist() {
-      this.$store.dispatch('webapi/registFoods', {
-        userId: this.userId,
-        date: new Date(),
-        name: this.visionResp.newFood.name,
-        calorie: this.visionResp.newFood.calorie
-      });
+      this.$store
+        .dispatch('webapi/registFoods', {
+          userId: this.userId,
+          date: new Date(),
+          name: this.visionResp.newFood.name,
+          calorie: this.visionResp.newFood.calorie
+        })
+        .then(() => {
+          this.successRegist = true;
+        })
+        .catch(err => {
+          if (
+            err.response != null &&
+            err.response.data != null &&
+            err.response.data.error != null
+          ) {
+            this.error = 'Firebase Error : ' + err.response.data.error;
+          } else {
+            this.error = err;
+          }
+        });
     }
   }
 };

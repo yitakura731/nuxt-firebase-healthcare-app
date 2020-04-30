@@ -9,7 +9,7 @@
       class="border rounded bg-light mx-1 mt-1 mb-3"
     />
     <hr class="my-1">
-    <div v-for="(food, index) in foods" :key="food.index">
+    <div v-for="(food, index) in foods.slice(0, 3)" :key="food.index">
       <hc-food-history-item :food="food" :index="index" />
     </div>
   </div>
