@@ -53,6 +53,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 import HCVisionDetailChart from '~/components/hc-vision-detail-chart.vue';
 
 export default {
@@ -65,6 +66,9 @@ export default {
     };
   },
   computed: {
+    ...mapGetters({
+      visionResp: 'webapi/visionResp'
+    }),
     visionResp() {
       return this.$store.state.webapi.visionResp;
     },

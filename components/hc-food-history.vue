@@ -16,6 +16,7 @@
 </template>>
 
 <script>
+import { mapGetters } from 'vuex';
 import HcCalorieChart from '~/components/hc-calorie-chart.vue';
 import HcFoodHistoryItem from '~/components/hc-food-history-item.vue';
 import firebase from '@/plugins/firebase';
@@ -26,9 +27,9 @@ export default {
     'hc-food-history-item': HcFoodHistoryItem
   },
   computed: {
-    foods() {
-      return this.$store.state.webapi.foods;
-    }
+    ...mapGetters({
+      foods: 'webapi/foods'
+    })
   },
   mounted() {
     firebase.auth().onAuthStateChanged(user => {

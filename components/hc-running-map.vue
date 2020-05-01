@@ -57,6 +57,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 import firebase from '@/plugins/firebase';
 
 export default {
@@ -77,9 +78,9 @@ export default {
     };
   },
   computed: {
-    onRunning() {
-      return this.$store.state.webapi.onRunning;
-    }
+    ...mapGetters({
+      onRunning: 'webapi/onRunning'
+    })
   },
   watch: {
     onRunning(newVal, oldVal) {

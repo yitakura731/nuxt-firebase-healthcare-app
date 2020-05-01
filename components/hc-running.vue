@@ -33,7 +33,7 @@
         終わる
       </b-button>
     </div>
-    <div v-if="onRunning == 'STOP'" class="m-1 bg-light border rounded">
+    <div v-if="onRunning === 'STOP'" class="m-1 bg-light border rounded">
       <div 
         class="d-flex justify-content-center align-items-center" 
         style="height: 100px"
@@ -41,7 +41,7 @@
         マラソンを開始してください
       </div>
     </div>
-    <div v-else-if="onRunning == 'PENDING' && runResp != null" class="m-1 border rounded">
+    <div v-else-if="onRunning === 'PENDING' && runResp != null" class="m-1 border rounded">
       <div class="d-flex">
         <div class="flex-fill">
           <div class="w-100 text-center">
@@ -99,6 +99,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 import HCRunningMap from '~/components/hc-running-map.vue';
 import firebase from '@/plugins/firebase';
 
@@ -114,12 +115,10 @@ export default {
     };
   },
   computed: {
-    onRunning() {
-      return this.$store.state.webapi.onRunning;
-    },
-    runResp() {
-      return this.$store.state.webapi.runResp;
-    }
+    ...mapGetters({
+      onRunning: 'webapi/onRunning',
+      runResp: 'webapi/runResp'
+    })
   },
   watch: {
     runResp(newVal, oldVal) {

@@ -16,6 +16,7 @@
 </template>>
 
 <script>
+import { mapGetters } from 'vuex';
 import HcCalorieChart from '~/components/hc-calorie-chart.vue';
 import HcRunningHistoryItem from '~/components/hc-running-history-item.vue';
 import firebase from '@/plugins/firebase';
@@ -26,9 +27,9 @@ export default {
     'hc-calorie-chart': HcCalorieChart
   },
   computed: {
-    runs() {
-      return this.$store.state.webapi.runs;
-    }
+    ...mapGetters({
+      runs: 'webapi/runs'
+    })
   },
   mounted() {
     firebase.auth().onAuthStateChanged(user => {

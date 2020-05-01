@@ -17,6 +17,7 @@
 </template>>
 
 <script>
+import { mapGetters } from 'vuex';
 import HcSiteItem from '~/components/hc-site-item.vue';
 
 export default {
@@ -30,9 +31,9 @@ export default {
     };
   },
   computed: {
-    visionResp() {
-      return this.$store.state.webapi.visionResp;
-    }
+    ...mapGetters({
+      visionResp: 'webapi/visionResp'
+    })
   },
   watch: {
     visionResp(newVal, oldVal) {

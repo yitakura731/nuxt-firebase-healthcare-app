@@ -58,6 +58,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 import HCFoodCamera from '~/components/hc-food-camera.vue';
 import HCVisionDetail from '~/components/hc-vision-detail.vue';
 import HCSite from '~/components/hc-site.vue';
@@ -77,9 +78,9 @@ export default {
     };
   },
   computed: {
-    visionResp() {
-      return this.$store.state.webapi.visionResp;
-    }
+    ...mapGetters({
+      visionResp: 'webapi/visionResp'
+    })
   },
   watch: {
     visionResp(newVal, oldVal) {
