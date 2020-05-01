@@ -57,7 +57,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapGetters, mapMutations, mapActions } from 'vuex';
 import firebase from '@/plugins/firebase';
 
 export default {
@@ -78,9 +78,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters({
-      onRunning: 'webapi/onRunning'
-    })
+    ...mapGetters('webapi', ['onRunning'])
   },
   watch: {
     onRunning(newVal, oldVal) {
@@ -94,7 +92,7 @@ export default {
         }, 1000);
       } else if (newVal === 'PENDING' && oldVal === 'RUNNING') {
         clearInterval(this.timerObj);
-        this.$store.commit('webapi/runResp', {
+        this.runResp({
           distance: this.distance,
           calorie: Math.round(this.distance * this.userWeight)
         });
@@ -103,7 +101,7 @@ export default {
         (newVal === 'STOP' && oldVal === 'PENDING')
       ) {
         clearInterval(this.timerObj);
-        this.$store.commit('webapi/runResp', null);
+        this.runResp(null);
         this.stopWatch = Date.parse('2018/01/01 00:00:00');
         this.distance = 0;
         this.paths = [];
@@ -119,13 +117,15 @@ export default {
     );
     firebase.auth().onAuthStateChanged(user => {
       if (user) {
-        this.$store.dispatch('webapi/getCurrentUser', user.uid).then(user => {
+        this.getCurrentUser(user.uid).then(user => {
           this.userWeight = user.weight;
         });
       }
     });
   },
   methods: {
+    ...mapMutations('webapi', ['runResp']),
+    ...mapActions('webapi', ['getCurrentUser']),
     successPosition(position) {
       const lat = position.coords.latitude;
       const lng = position.coords.longitude;

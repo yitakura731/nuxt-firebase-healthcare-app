@@ -47,12 +47,12 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 import firebase from '@/plugins/firebase';
+
 export default {
   computed: {
-    onRunning() {
-      return this.$store.state.webapi.onRunning;
-    }
+    ...mapGetters('webapi', ['onRunning'])
   },
   methods: {
     logout() {

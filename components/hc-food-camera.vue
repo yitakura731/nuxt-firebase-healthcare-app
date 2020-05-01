@@ -21,6 +21,8 @@
 </template>
 
 <script>
+import { mapMutations, mapActions } from 'vuex';
+
 export default {
   data() {
     return {
@@ -46,8 +48,10 @@ export default {
     }
   },
   methods: {
+    ...mapMutations('webapi', ['visionResp']),
+    ...mapActions('webapi', ['execGoogleVisionApi', 'getCalorie']),
     reset() {
-      this.$store.commit('webapi/visionResp', null);
+      this.visionResp(null);
       this.captured = false;
     },
     capture() {
@@ -56,10 +60,9 @@ export default {
       const ctx = this.canvas.getContext('2d');
       ctx.drawImage(this.video, 0, 0, 340, 340);
       const imgData = this.canvas.toDataURL('image/webp').split(',')[1];
-      this.$store.commit('webapi/visionResp', null);
+      this.visionResp(null);
       const retVal = {};
-      this.$store
-        .dispatch('webapi/execGoogleVisionApi', imgData)
+      this.execGoogleVisionApi(imgData)
         .then(apiResp => {
           // Fetch localized object detection result
           if (apiResp.responses[0].localizedObjectAnnotations != null) {
@@ -96,12 +99,9 @@ export default {
               name: 'Food label',
               calorie: retVal.hitwords.validWords[0].text.replace('kcal', '')
             };
-            this.$store.commit('webapi/visionResp', retVal);
+            this.visionResp(retVal);
           } else if (retVal.objects.length > 0) {
-            return this.$store.dispatch(
-              'webapi/getCalorie',
-              retVal.objects[0].name
-            );
+            return this.getCalorie(retVal.objects[0].name);
           }
         })
         .then(response => {
@@ -115,7 +115,7 @@ export default {
               calorie: 'N/A'
             };
           }
-          this.$store.commit('webapi/visionResp', retVal);
+          this.visionResp(retVal);
         })
         .catch(err => {
           if (

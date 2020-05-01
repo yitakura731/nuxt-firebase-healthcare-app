@@ -66,12 +66,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters({
-      visionResp: 'webapi/visionResp'
-    }),
-    visionResp() {
-      return this.$store.state.webapi.visionResp;
-    },
+    ...mapGetters('webapi', ['visionResp']),
     validHitwords() {
       let retVal = '';
       if (this.visionResp.hitwords.validWords.length > 0) {
@@ -107,6 +102,3 @@ export default {
   }
 };
 </script>
-
-<style>
-</style>

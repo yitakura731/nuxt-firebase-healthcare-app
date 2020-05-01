@@ -58,7 +58,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 import HCFoodCamera from '~/components/hc-food-camera.vue';
 import HCVisionDetail from '~/components/hc-vision-detail.vue';
 import HCSite from '~/components/hc-site.vue';
@@ -78,9 +78,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters({
-      visionResp: 'webapi/visionResp'
-    })
+    ...mapGetters('webapi', ['visionResp'])
   },
   watch: {
     visionResp(newVal, oldVal) {
@@ -93,21 +91,21 @@ export default {
   mounted() {
     firebase.auth().onAuthStateChanged(user => {
       if (user) {
-        this.$store.dispatch('webapi/getCurrentUser', user.uid).then(user => {
+        this.getCurrentUser(user.uid).then(user => {
           this.userId = user.id;
         });
       }
     });
   },
   methods: {
+    ...mapActions('webapi', ['getCurrentUser', 'registFoods']),
     regist() {
-      this.$store
-        .dispatch('webapi/registFoods', {
-          userId: this.userId,
-          date: new Date(),
-          name: this.visionResp.newFood.name,
-          calorie: this.visionResp.newFood.calorie
-        })
+      this.registFoods({
+        userId: this.userId,
+        date: new Date(),
+        name: this.visionResp.newFood.name,
+        calorie: this.visionResp.newFood.calorie
+      })
         .then(() => {
           this.successRegist = true;
         })

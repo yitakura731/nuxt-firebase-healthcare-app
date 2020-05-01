@@ -73,7 +73,7 @@
           <font-awesome-icon :icon="['fas', 'registered']" />
           <a>楽天</a>
         </b-button>
-        <b-button variant="success" class="flex-fill m-1" @click="registRun()">
+        <b-button variant="success" class="flex-fill m-1" @click="storeRun()">
           <font-awesome-icon :icon="['fas', 'cloud-upload-alt']" />
           <a>登録</a>
         </b-button>
@@ -99,7 +99,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapGetters, mapMutations, mapActions } from 'vuex';
 import HCRunningMap from '~/components/hc-running-map.vue';
 import firebase from '@/plugins/firebase';
 
@@ -131,30 +131,33 @@ export default {
   mounted() {
     firebase.auth().onAuthStateChanged(user => {
       if (user) {
-        this.$store.dispatch('webapi/getCurrentUser', user.uid).then(user => {
+        this.getCurrentUser(user.uid).then(user => {
           this.userId = user.id;
         });
       }
     });
   },
   methods: {
+    ...mapMutations({
+      commitOnRunning: 'webapi/onRunning'
+    }),
+    ...mapActions('webapi', ['getCurrentUser', 'registRun']),
     startRun() {
-      this.$store.commit('webapi/onRunning', 'RUNNING');
+      this.commitOnRunning('RUNNING');
     },
     pendingRun() {
-      this.$store.commit('webapi/onRunning', 'PENDING');
+      this.commitOnRunning('PENDING');
     },
     stopRun() {
-      this.$store.commit('webapi/onRunning', 'STOP');
+      this.commitOnRunning('STOP');
     },
-    registRun() {
-      this.$store
-        .dispatch('webapi/registRun', {
-          userId: this.userId,
-          date: new Date(),
-          distance: this.runResp.distance,
-          calorie: this.runResp.calorie
-        })
+    storeRun() {
+      this.registRun({
+        userId: this.userId,
+        date: new Date(),
+        distance: this.runResp.distance,
+        calorie: this.runResp.calorie
+      })
         .then(() => {
           this.successRegist = true;
         })

@@ -16,7 +16,7 @@
 </template>>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 import HcCalorieChart from '~/components/hc-calorie-chart.vue';
 import HcFoodHistoryItem from '~/components/hc-food-history-item.vue';
 import firebase from '@/plugins/firebase';
@@ -34,9 +34,12 @@ export default {
   mounted() {
     firebase.auth().onAuthStateChanged(user => {
       if (user) {
-        this.$store.dispatch('webapi/fetchFoods', { userId: user.uid });
+        this.fetchFoods({ userId: user.uid });
       }
     });
+  },
+  methods: {
+    ...mapActions('webapi', ['fetchFoods'])
   }
 };
 </script>>
