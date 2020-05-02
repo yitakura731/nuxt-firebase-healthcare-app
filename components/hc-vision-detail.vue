@@ -1,5 +1,18 @@
 <template>
-  <b-modal id="vision-detail-modal" hide-header ok-only scrollable ok-title="閉じる">
+  <b-modal 
+    id="vision-detail-modal" 
+    hide-header-close
+    header-bg-variant="secondary"
+    header-text-variant="white" 
+    ok-only 
+    scrollable 
+    ok-variant="secondary"
+    ok-title="閉じる"
+  >
+    <template v-slot:modal-title>
+      <font-awesome-icon :icon="['fas', 'glass']" />
+      物体検知結果
+    </template>
     <div v-if="visionResp != null" class="mt-2 px-1">
       <div v-if="visionResp.objects.length > 0">
         <a class="font-weight-bolder ml-2">物体検知</a>

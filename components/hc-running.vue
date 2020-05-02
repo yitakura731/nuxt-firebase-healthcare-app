@@ -69,7 +69,11 @@
         </div>
       </div>
       <div class="d-flex mt-1">
-        <b-button variant="danger" class="flex-fill m-1">
+        <b-button
+          v-b-modal.site-modal 
+          variant="danger"
+          class="flex-fill m-1"
+        >
           <font-awesome-icon :icon="['fas', 'registered']" />
           <a>楽天</a>
         </b-button>
@@ -95,17 +99,20 @@
         <b-spinner label="Loading..." variant="success" class="ml-2" />
       </div>
     </div>
+    <hc-site :calorie="queryCalorie" />
   </div>
 </template>
 
 <script>
 import { mapGetters, mapMutations, mapActions } from 'vuex';
 import HCRunningMap from '~/components/hc-running-map.vue';
+import HCSite from '~/components/hc-site.vue';
 import firebase from '@/plugins/firebase';
 
 export default {
   components: {
-    'hc-running-map': HCRunningMap
+    'hc-running-map': HCRunningMap,
+    'hc-site': HCSite
   },
   data() {
     return {
@@ -118,7 +125,19 @@ export default {
     ...mapGetters({
       onRunning: 'webapi/onRunning',
       runResp: 'webapi/runResp'
-    })
+    }),
+    queryCalorie() {
+      let retVal = -1;
+      if (this.runResp != null) {
+        retVal = this.runResp.calorie;
+        const numlen = String(retVal).length;
+        if (numlen > 2) {
+          const base = Math.pow(10, numlen - 2);
+          retVal = Math.floor(retVal / base) * base;
+        }
+      }
+      return retVal;
+    }
   },
   watch: {
     runResp(newVal, oldVal) {

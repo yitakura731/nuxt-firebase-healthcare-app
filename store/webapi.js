@@ -122,16 +122,15 @@ export const actions = {
       }
     });
   },
-  async getRakutenWebSite(context, keywords) {
+  async getRakutenWebSite(context, arg) {
     let query = '';
-    keywords.forEach(keyword => {
+    arg.keywords.forEach(keyword => {
       query += keyword + ' ';
     });
     const retVal = [];
-    const generId = 100938;
     const url = `${process.env.RAKUTEN_SHOP_URL}?applicationId=${
       process.env.RAKUTEN_SHOP_SECRET
-    }&genreId=${generId}&keyword=${encodeURIComponent(
+    }&genreId=${arg.category}&keyword=${encodeURIComponent(
       query
     )}&orFlag=0&imageFlag=1`;
     const result = await this.$axios.$get(url);

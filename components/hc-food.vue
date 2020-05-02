@@ -53,7 +53,7 @@
       </div>
     </div>
     <hc-vision-detail />
-    <hc-site />
+    <hc-site :calorie="queryCalorie" />
   </div>
 </template>
 
@@ -78,7 +78,22 @@ export default {
     };
   },
   computed: {
-    ...mapGetters('webapi', ['visionResp'])
+    ...mapGetters('webapi', ['visionResp']),
+    queryCalorie() {
+      let retVal = -1;
+      if (
+        this.visionResp != null &&
+        this.visionResp.newFood.calorie !== 'N/A'
+      ) {
+        retVal = this.visionResp.newFood.calorie;
+        const numlen = String(retVal).length;
+        if (numlen > 2) {
+          const base = Math.pow(10, numlen - 2);
+          retVal = Math.floor(retVal / base) * base;
+        }
+      }
+      return retVal;
+    }
   },
   watch: {
     visionResp(newVal, oldVal) {
