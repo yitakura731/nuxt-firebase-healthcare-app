@@ -17,9 +17,10 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex';
+import firebase from 'firebase/app';
 import HcCalorieChart from '~/components/hc-calorie-chart.vue';
 import HcFoodHistoryItem from '~/components/hc-food-history-item.vue';
-import firebase from '@/plugins/firebase';
+import 'firebase/auth';
 
 export default {
   components: {

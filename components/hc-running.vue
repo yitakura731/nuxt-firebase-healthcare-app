@@ -105,9 +105,10 @@
 
 <script>
 import { mapGetters, mapMutations, mapActions } from 'vuex';
+import firebase from 'firebase/app';
 import HCRunningMap from '~/components/hc-running-map.vue';
 import HCSite from '~/components/hc-site.vue';
-import firebase from '@/plugins/firebase';
+import 'firebase/auth';
 
 export default {
   components: {

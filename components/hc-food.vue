@@ -59,10 +59,11 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex';
+import firebase from 'firebase/app';
 import HCFoodCamera from '~/components/hc-food-camera.vue';
 import HCVisionDetail from '~/components/hc-vision-detail.vue';
 import HCSite from '~/components/hc-site.vue';
-import firebase from '@/plugins/firebase';
+import 'firebase/auth';
 
 export default {
   components: {

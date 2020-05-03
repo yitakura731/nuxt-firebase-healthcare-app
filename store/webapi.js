@@ -1,4 +1,6 @@
 import firebase from '@/plugins/firebase';
+import 'firebase/auth';
+import 'firebase/firestore';
 const db = firebase.firestore();
 
 export const state = () => ({
