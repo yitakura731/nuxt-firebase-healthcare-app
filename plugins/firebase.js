@@ -12,9 +12,6 @@ if (!firebase.apps.length) {
     appId: process.env.FIREBASE_APPID,
     measurementId: process.env.FIREBASE_MESURE_ID
   };
-  const firebaseApp = firebase.initializeApp(config);
-  const settings = { timestampsInSnapshots: true };
-  const firestore = firebaseApp.firestore();
-  firestore.settings(settings);
+  firebase.initializeApp(config);
 }
 export default firebase;
