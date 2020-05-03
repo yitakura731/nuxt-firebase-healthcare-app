@@ -4,7 +4,7 @@
       <b-tab title-link-class="text-dark">
         <template v-slot:title>
           <font-awesome-icon :icon="['fas', 'running']" />
-          <a class="ml-1">マラソン</a>
+          <a class="ml-1">ランニング</a>
         </template>
         <hc-running />
       </b-tab>

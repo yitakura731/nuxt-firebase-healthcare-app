@@ -1,11 +1,22 @@
 <template>
-  <div class="p-2 mb-3">
+  <div class="mb-3">
     <hc-food-camera />
-    <div v-if="visionResp != null" class="p-1 border rounded">
+    <div class="w-100 mt-3 d-flex justify-content-center">
+      <b-button 
+        pill
+        :disabled="onCapturing === 'CAPTURING'"  
+        class="bg-success border-0 w-75" 
+        @click="capture()"
+      >
+        <font-awesome-icon :icon="['fas', 'utensils']" />
+        撮影
+      </b-button>
+    </div>
+    <div v-if="onCapturing === 'CAPTURED'" class="mt-2 border rounded">
       <div class="d-flex align-items-center" style="height: 60px">
-        <span class="flex-fill ml-1">
+        <div class="w-75 text-wrap ml-2">
           {{ visionResp.newFood.name }}
-        </span>
+        </div>
         <h4 class="text-info mb-0">
           {{ visionResp.newFood.calorie }}
         </h4>
@@ -14,7 +25,11 @@
         </div>
       </div>
       <div class="d-flex">
-        <b-button v-b-modal.vision-detail-modal variant="secondary" class="flex-fill m-1">
+        <b-button 
+          v-b-modal.vision-detail-modal 
+          variant="info" 
+          class="flex-fill m-1"
+        >
           <font-awesome-icon :icon="['fas', 'glasses']" />
           詳細
         </b-button>
@@ -29,24 +44,41 @@
         </b-button>
         <b-button 
           variant="success" 
-          :disabled="visionResp.newFood.calorie === 'N/A'" 
+          :disabled="visionResp.newFood.calorie === 'N/A' || onRegist !== 'none'" 
           class="flex-fill m-1" 
           @click="regist()"
         >
           <font-awesome-icon :icon="['fas', 'cloud-upload-alt']" />
           登録
         </b-button>
+        <b-button 
+          variant="secondary" 
+          class="flex-fill m-1" 
+          @click="reset()"
+        >
+          <font-awesome-icon :icon="['fas', 'times']" />
+          終了
+        </b-button>
       </div>
-      <b-alert variant="success" :show="successRegist" class="mt-2 text-center">
+      <b-alert variant="success" :show="onRegist === 'success'" class="m-1 text-center">
         登録に成功しました
       </b-alert>
-      <b-alert variant="warning" :show="error != null" class="mt-2 text-center">
+      <b-alert variant="warning" :show="onRegist === 'error'" class="m-1 text-center">
         {{ error }}
       </b-alert>
     </div>
-    <div v-else>
+    <div v-else-if="onCapturing === 'CAPTURING'" class="border rounded mt-2">
       <div 
-        class="mt-1 p-1 border rounded bg-light d-flex justify-content-center align-items-center" 
+        class="bg-light d-flex justify-content-center align-items-center" 
+        style="height: 116px"
+      >
+        解析中
+        <b-spinner label="Loading..." variant="success" class="ml-2" />
+      </div>
+    </div>
+    <div v-else class="border rounded mt-2">
+      <div 
+        class="bg-light d-flex justify-content-center align-items-center" 
         style="height: 116px"
       >
         撮影してください
@@ -58,7 +90,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex';
+import { mapGetters, mapMutations, mapActions } from 'vuex';
 import firebase from 'firebase/app';
 import HCFoodCamera from '~/components/hc-food-camera.vue';
 import HCVisionDetail from '~/components/hc-vision-detail.vue';
@@ -73,13 +105,13 @@ export default {
   },
   data() {
     return {
-      successRegist: false,
       userId: null,
+      onRegist: 'none',
       error: null
     };
   },
   computed: {
-    ...mapGetters('webapi', ['visionResp']),
+    ...mapGetters('webapi', ['visionResp', 'onCapturing']),
     queryCalorie() {
       let retVal = -1;
       if (
@@ -96,14 +128,6 @@ export default {
       return retVal;
     }
   },
-  watch: {
-    visionResp(newVal, oldVal) {
-      if (!newVal) {
-        this.successRegist = false;
-        this.error = null;
-      }
-    }
-  },
   mounted() {
     firebase.auth().onAuthStateChanged(user => {
       if (user) {
@@ -114,8 +138,20 @@ export default {
     });
   },
   methods: {
+    ...mapMutations({
+      commitOnCapturing: 'webapi/onCapturing'
+    }),
     ...mapActions('webapi', ['getCurrentUser', 'registFoods']),
+    capture() {
+      this.commitOnCapturing('CAPTURING');
+    },
+    reset() {
+      this.commitOnCapturing('NONE');
+      this.onRegist = 'none';
+      this.error = null;
+    },
     regist() {
+      this.onRegist = 'registering';
       this.registFoods({
         userId: this.userId,
         date: new Date(),
@@ -123,9 +159,10 @@ export default {
         calorie: this.visionResp.newFood.calorie
       })
         .then(() => {
-          this.successRegist = true;
+          this.onRegist = 'success';
         })
         .catch(err => {
+          this.onRegist = 'error';
           if (
             err.response != null &&
             err.response.data != null &&

@@ -22,23 +22,13 @@
         <font-awesome-icon :icon="['fas', 'walking']" />
         止まる
       </b-button>
-      <b-button 
-        v-if="onRunning === 'PENDING'"
-        pill
-        variant="secondary" 
-        class="flex-fill border-0 ml-1" 
-        @click="stopRun()"
-      >
-        <font-awesome-icon :icon="['fas', 'stop-circle']" />
-        終わる
-      </b-button>
     </div>
     <div v-if="onRunning === 'STOP'" class="m-1 bg-light border rounded">
       <div 
         class="d-flex justify-content-center align-items-center" 
         style="height: 100px"
       >
-        マラソンを開始してください
+        ランニングを開始してください
       </div>
     </div>
     <div v-else-if="onRunning === 'PENDING' && runResp != null" class="m-1 border rounded">
@@ -77,15 +67,28 @@
           <font-awesome-icon :icon="['fas', 'registered']" />
           <a>楽天</a>
         </b-button>
-        <b-button variant="success" class="flex-fill m-1" @click="storeRun()">
+        <b-button 
+          :disabled="onRegist !== 'none'" 
+          variant="success"
+          class="flex-fill m-1" 
+          @click="storeRun()"
+        >
           <font-awesome-icon :icon="['fas', 'cloud-upload-alt']" />
           <a>登録</a>
         </b-button>
+        <b-button 
+          variant="secondary" 
+          class="flex-fill m-1" 
+          @click="stopRun()"
+        >
+          <font-awesome-icon :icon="['fas', 'stop-circle']" />
+          終わる
+        </b-button>
       </div>
-      <b-alert variant="success" :show="successRegist" class="my-1 mx-2 p-1 text-center">
+      <b-alert variant="success" :show="onRegist === 'success'" class="my-1 mx-2 p-1 text-center">
         登録に成功しました
       </b-alert>
-      <b-alert variant="warning" :show="error != null" class="my-1 mx-2 p-1 text-center">
+      <b-alert variant="warning" :show="onRegist === 'error'" class="my-1 mx-2 p-1 text-center">
         {{ error }}
       </b-alert>
     </div>
@@ -95,7 +98,7 @@
         style="height: 100px"
       >
         <font-awesome-icon :icon="['fas', 'running']" class="mr-2" />
-        マラソン中
+        ランニング中
         <b-spinner label="Loading..." variant="success" class="ml-2" />
       </div>
     </div>
@@ -118,7 +121,7 @@ export default {
   data() {
     return {
       userId: null,
-      successRegist: false,
+      onRegist: 'none',
       error: null
     };
   },
@@ -138,14 +141,6 @@ export default {
         }
       }
       return retVal;
-    }
-  },
-  watch: {
-    runResp(newVal, oldVal) {
-      if (!newVal) {
-        this.successRegist = false;
-        this.error = null;
-      }
     }
   },
   mounted() {
@@ -170,8 +165,11 @@ export default {
     },
     stopRun() {
       this.commitOnRunning('STOP');
+      this.onRegist = 'none';
+      this.error = null;
     },
     storeRun() {
+      this.onRegist = 'registering';
       this.registRun({
         userId: this.userId,
         date: new Date(),
@@ -179,9 +177,10 @@ export default {
         calorie: this.runResp.calorie
       })
         .then(() => {
-          this.successRegist = true;
+          this.onRegist = 'success';
         })
         .catch(err => {
+          this.onRegist = 'error';
           if (
             err.response != null &&
             err.response.data != null &&
