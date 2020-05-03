@@ -1,36 +1,32 @@
 <template>
-  <div class="d-flex flex-column align-items-center mb-3">
-    <div class="hc-camera-root d-flex flex-column align-items-center">
-      <video ref="video" class="hc-video" autoplay playsinline />
-      <div v-show="captured">
-        <canvas ref="canvas" height="340px" width="340px" class="hc-canvas" />
-      </div>
-    </div>
-    <div v-if="!captured" class="w-100 mt-3 d-flex justify-content-center">
-      <b-button pill class="bg-success border-0 w-75" @click="capture()">
-        <font-awesome-icon :icon="['fas', 'utensils']" />
-        これ食べた！
-      </b-button>
-    </div>
-    <div v-else class="w-100 mt-3 d-flex justify-content-center">
-      <b-button pill class="bg-secoundary border-0 w-75" @click="reset()">
-        もう一度！
-      </b-button>
+  <div class="hc-camera-root d-flex flex-column align-items-center">
+    <video ref="video" class="hc-video mt-2" autoplay playsinline />
+    <div v-show="onCapturing !== 'NONE'">
+      <canvas ref="canvas" height="340px" width="340px" class="hc-canvas" />
     </div>
   </div>
 </template>
 
 <script>
-import { mapMutations, mapActions } from 'vuex';
+import { mapGetters, mapMutations, mapActions } from 'vuex';
 
 export default {
   data() {
     return {
       video: {},
       canvas: {},
-      captured: false,
       error: null
     };
+  },
+  computed: {
+    ...mapGetters('webapi', ['onCapturing'])
+  },
+  watch: {
+    onCapturing(newVal, oldVal) {
+      if (newVal === 'CAPTURING') {
+        this.capture();
+      }
+    }
   },
   mounted() {
     this.video = this.$refs.video;
@@ -48,19 +44,16 @@ export default {
     }
   },
   methods: {
-    ...mapMutations('webapi', ['visionResp']),
+    ...mapMutations('webapi', {
+      visionResp: 'visionResp',
+      commitOnCapturing: 'onCapturing'
+    }),
     ...mapActions('webapi', ['execGoogleVisionApi', 'getCalorie']),
-    reset() {
-      this.visionResp(null);
-      this.captured = false;
-    },
     capture() {
-      this.captured = true;
       this.canvas = this.$refs.canvas;
       const ctx = this.canvas.getContext('2d');
       ctx.drawImage(this.video, 0, 0, 340, 340);
       const imgData = this.canvas.toDataURL('image/webp').split(',')[1];
-      this.visionResp(null);
       const retVal = {};
       this.execGoogleVisionApi(imgData)
         .then(apiResp => {
@@ -116,6 +109,7 @@ export default {
             };
           }
           this.visionResp(retVal);
+          this.commitOnCapturing('CAPTURED');
         })
         .catch(err => {
           if (
@@ -223,7 +217,6 @@ export default {
   object-fit: fill;
   width: 340px;
   height: 340px;
-  padding-top: 5px;
 }
 
 .hc-canvas {

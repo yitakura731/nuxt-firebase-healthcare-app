@@ -10,7 +10,7 @@
     ok-title="閉じる"
   >
     <template v-slot:modal-title>
-      <font-awesome-icon :icon="['fas', 'glass']" />
+      <font-awesome-icon :icon="['fas', 'glasses']" />
       物体検知結果
     </template>
     <div v-if="visionResp != null" class="mt-2 px-1">

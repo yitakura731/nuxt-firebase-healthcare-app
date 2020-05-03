@@ -7,6 +7,7 @@ export const state = () => ({
   visionResp: null,
   runResp: null,
   onRunning: 'STOP',
+  onCapturing: 'NONE',
   runs: [],
   foods: []
 });
@@ -17,6 +18,9 @@ export const mutations = {
   },
   runResp(state, runResp) {
     state.runResp = runResp;
+  },
+  onCapturing(state, onCapturing) {
+    state.onCapturing = onCapturing;
   },
   onRunning(state, onRunning) {
     state.onRunning = onRunning;
@@ -35,6 +39,9 @@ export const getters = {
   },
   runResp: state => {
     return state.runResp;
+  },
+  onCapturing: state => {
+    return state.onCapturing;
   },
   onRunning: state => {
     return state.onRunning;
