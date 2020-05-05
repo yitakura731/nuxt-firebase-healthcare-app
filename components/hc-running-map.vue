@@ -1,6 +1,6 @@
 <template>
-  <div class="p-1">
-    <div class="d-flex mb-2">
+  <div class="pb-1">
+    <div class="d-flex mb-1">
       <div class="flex-fill">
         <div class="w-100 text-center">
           <small class="mb-0">

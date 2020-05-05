@@ -6,67 +6,8 @@
         HC Demo App
       </div>
     </div>
-    <div v-if="onRunning != 'STOP'">
-      <div class="mr-3">
-        <font-awesome-icon :icon="['fas', 'running']" />
-      </div>
-    </div>
-    <div v-else class="mr-2 border-0 rounded">
-      <b-dropdown right no-caret variant="bg-primary" menu-class="customDropDownMenu">
-        <template v-slot:button-content>
-          <font-awesome-icon :icon="['fas', 'align-justify']" />
-        </template>
-        <b-dropdown-item> 
-          <nuxt-link to="/meal" class="text-dark">
-            <font-awesome-icon icon="utensils" />
-            <a class="ml-2">食事</a>
-          </nuxt-link>
-        </b-dropdown-item>
-        <hr class="my-1">
-        <b-dropdown-item>
-          <nuxt-link to="/exercise" class="text-dark">
-            <font-awesome-icon icon="running" />
-            <a class="ml-2">運動</a>
-          </nuxt-link>
-        </b-dropdown-item>
-        <hr class="my-1">
-        <b-dropdown-item>
-          <nuxt-link to="/profile" class="text-dark">
-            <font-awesome-icon icon="user-circle" />
-            <a class="ml-2">アカウント</a>
-          </nuxt-link>
-        </b-dropdown-item>
-        <hr class="my-1">
-        <b-dropdown-item class="text-dark" @click="logout">
-          <font-awesome-icon icon="sign-out-alt" />
-          <a class="ml-2">ログアウト</a>
-        </b-dropdown-item>
-      </b-dropdown>
-    </div>
   </div>
 </template>
-
-<script>
-import { mapGetters } from 'vuex';
-import firebase from 'firebase/app';
-import 'firebase/auth';
-
-export default {
-  computed: {
-    ...mapGetters('webapi', ['onRunning'])
-  },
-  methods: {
-    logout() {
-      firebase
-        .auth()
-        .signOut()
-        .then(() => {
-          this.$router.push('/');
-        });
-    }
-  }
-};
-</script>
 
 <style scoped>
 .hc-header {
@@ -77,10 +18,5 @@ export default {
   font-size: 24px;
   width: 100%;
   height: 44px;
-}
-
-.customDropDownMenu {
-  color: red;
-  background-color: red;
 }
 </style>

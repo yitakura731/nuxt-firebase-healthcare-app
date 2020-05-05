@@ -1,7 +1,7 @@
 <template>
   <div>
     <hc-running-map />
-    <div class="d-flex px-5 my-1">
+    <div class="d-flex px-5 mb-1">
       <b-button 
         v-if="onRunning !== 'RUNNING'"
         pill
