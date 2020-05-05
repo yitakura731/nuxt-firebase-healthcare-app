@@ -58,7 +58,7 @@
           </div>
         </div>
       </div>
-      <div class="d-flex mt-1">
+      <div class="d-flex">
         <b-button
           v-b-modal.site-modal 
           variant="danger"

@@ -1,6 +1,6 @@
 <template>
   <div class="pb-1">
-    <div class="d-flex mb-1">
+    <div class="d-flex">
       <div class="flex-fill">
         <div class="w-100 text-center">
           <small class="mb-0">
@@ -41,7 +41,7 @@
           disableDefaultUi: false
         }"
         map-type-id="terrain"
-        style="width: 340px; height: 340px"
+        style="width: 340px; height: 320px"
       >
         <GmapMarker :position="location" :icon="icon" />
         <gmap-polyline 

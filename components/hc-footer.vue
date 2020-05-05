@@ -1,5 +1,5 @@
 <template>
-  <b-navbar fixed="bottom" class="border-top p-1">
+  <b-navbar fixed="bottom" class="border-top pt-1 pb-0">
     <div 
       v-if="onRunning !== 'RUNNING'" 
       class="d-flex justify-content-around w-100"

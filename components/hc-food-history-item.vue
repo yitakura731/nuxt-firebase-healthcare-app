@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="d-flex p-1 my-1 py-2">
+    <div class="d-flex p-1 my-1 py-1">
       <div class="flex-fill text-center mb-0 mt-2">
         {{ toFormatDate(food.date) }}
       </div>

@@ -1,6 +1,6 @@
 <template>
   <div class="p-1">
-    <b-tabs class="mt-1" fill>
+    <b-tabs fill>
       <b-tab title-link-class="text-dark">
         <template v-slot:title>
           <font-awesome-icon :icon="['fas', 'running']" />
