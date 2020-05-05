@@ -1,8 +1,5 @@
 <template>
   <div v-if="foods != null && foods.length > 0">
-    <div class="mt-2 ml-2">
-      <h6>最近のカロリー</h6>
-    </div>
     <hc-calorie-chart
       :data="foods"
       :height="400"

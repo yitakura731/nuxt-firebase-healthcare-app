@@ -6,4 +6,4 @@ function setManifest(path) {
   manifest.href = path;
   document.head.appendChild(manifest);
 }
-setManifest(iOS ? '/manifest_ios.json' : '/manifest.json');
+setManifest(iOS ? 'manifest_ios.json' : 'manifest.json');

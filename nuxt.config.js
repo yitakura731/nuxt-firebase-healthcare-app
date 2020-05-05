@@ -38,7 +38,7 @@ module.exports = {
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
       { hid: 'description', name: 'description', content: pkg.description }
     ],
-    link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }]
+    link: [{ rel: 'icon', type: 'image/x-icon', href: 'favicon.ico' }]
   },
 
   /*
@@ -109,6 +109,14 @@ module.exports = {
   },
 
   vendor: ['vue2-google-maps'],
+
+  manifest: {
+    name: 'Healthcare demo application',
+    short_name: 'HC Demo App',
+    start_url: '/',
+    orientation: 'landscape-primary',
+    display: 'standalone'
+  },
 
   /*
   ** Build configuration

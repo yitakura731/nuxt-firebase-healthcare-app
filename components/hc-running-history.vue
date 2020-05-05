@@ -1,8 +1,5 @@
 <template>
   <div v-if="runs != null && runs.length > 0">
-    <div class="mt-2 ml-2">
-      <h6>最近のランニング</h6>
-    </div>
     <hc-calorie-chart
       :data="runs"
       :height="400"
