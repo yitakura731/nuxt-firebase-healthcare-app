@@ -114,7 +114,7 @@ module.exports = {
     name: 'Healthcare demo application',
     short_name: 'HC Demo App',
     start_url: '/',
-    orientation: 'landscape-primary',
+    orientation: 'portrait',
     display: 'standalone'
   },
 
