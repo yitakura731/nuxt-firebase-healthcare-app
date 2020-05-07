@@ -60,12 +60,6 @@
           終了
         </b-button>
       </div>
-      <b-alert variant="success" :show="onRegist === 'success'" class="m-1 text-center">
-        登録に成功しました
-      </b-alert>
-      <b-alert variant="warning" :show="onRegist === 'error'" class="m-1 text-center">
-        {{ error }}
-      </b-alert>
     </div>
     <div v-else-if="onCapturing === 'CAPTURING'" class="border rounded mt-2">
       <div 
@@ -86,6 +80,8 @@
     </div>
     <hc-vision-detail />
     <hc-site :calorie="queryCalorie" />
+    <hc-success-modal ref="successModal" />
+    <hc-error-modal ref="errorModal" />
   </div>
 </template>
 
@@ -93,19 +89,21 @@
 import { mapGetters, mapMutations, mapActions } from 'vuex';
 import HCFoodCamera from '~/components/hc-food-camera.vue';
 import HCVisionDetail from '~/components/hc-vision-detail.vue';
+import HCSuccessModal from '~/components/hc-success-modal.vue';
+import HCErrorModal from '~/components/hc-error-modal.vue';
 import HCSite from '~/components/hc-site.vue';
 
 export default {
   components: {
     'hc-vision-detail': HCVisionDetail,
     'hc-food-camera': HCFoodCamera,
-    'hc-site': HCSite
+    'hc-site': HCSite,
+    'hc-success-modal': HCSuccessModal,
+    'hc-error-modal': HCErrorModal
   },
   data() {
     return {
-      userId: null,
-      onRegist: 'none',
-      error: null
+      onRegist: 'none'
     };
   },
   computed: {
@@ -137,7 +135,6 @@ export default {
     reset() {
       this.commitOnCapturing('NONE');
       this.onRegist = 'none';
-      this.error = null;
     },
     regist() {
       this.onRegist = 'registering';
@@ -149,23 +146,26 @@ export default {
       })
         .then(() => {
           this.onRegist = 'success';
+          this.$refs.successModal.showModal();
+          return new Promise(resolve => {
+            setTimeout(() => {
+              resolve();
+            }, 2000);
+          });
+        })
+        .then(() => {
+          this.$refs.successModal.hideModal();
+          this.commitOnCapturing('NONE');
+          this.onRegist = 'none';
         })
         .catch(err => {
           this.onRegist = 'error';
-          if (
-            err.response != null &&
-            err.response.data != null &&
-            err.response.data.error != null
-          ) {
-            this.error = 'Firebase Error : ' + err.response.data.error;
-          } else {
-            this.error = err;
-          }
+          this.$refs.errorModal.showModal(err, () => {
+            this.onRegist = 'none';
+            this.commitOnCapturing('NONE');
+          });
         });
     }
   }
 };
 </script>
-
-<style>
-</style>

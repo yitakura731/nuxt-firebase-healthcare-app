@@ -82,15 +82,9 @@
           @click="stopRun()"
         >
           <font-awesome-icon :icon="['fas', 'stop-circle']" />
-          終わる
+          <a>終了</a>
         </b-button>
       </div>
-      <b-alert variant="success" :show="onRegist === 'success'" class="my-1 mx-2 p-1 text-center">
-        登録に成功しました
-      </b-alert>
-      <b-alert variant="warning" :show="onRegist === 'error'" class="my-1 mx-2 p-1 text-center">
-        {{ error }}
-      </b-alert>
     </div>
     <div v-else class="m-1 running-area border rounded">
       <div 
@@ -103,24 +97,28 @@
       </div>
     </div>
     <hc-site :calorie="queryCalorie" />
+    <hc-success-modal ref="successModal" />
+    <hc-error-modal ref="errorModal" />
   </div>
 </template>
 
 <script>
 import { mapGetters, mapMutations, mapActions } from 'vuex';
 import HCRunningMap from '~/components/hc-running-map.vue';
+import HCSuccessModal from '~/components/hc-success-modal.vue';
+import HCErrorModal from '~/components/hc-error-modal.vue';
 import HCSite from '~/components/hc-site.vue';
 
 export default {
   components: {
     'hc-running-map': HCRunningMap,
-    'hc-site': HCSite
+    'hc-site': HCSite,
+    'hc-success-modal': HCSuccessModal,
+    'hc-error-modal': HCErrorModal
   },
   data() {
     return {
-      userId: null,
-      onRegist: 'none',
-      error: null
+      onRegist: 'none'
     };
   },
   computed: {
@@ -152,7 +150,6 @@ export default {
     stopRun() {
       this.commitOnRunning('STOP');
       this.onRegist = 'none';
-      this.error = null;
     },
     storeRun() {
       this.onRegist = 'registering';
@@ -164,18 +161,24 @@ export default {
       })
         .then(() => {
           this.onRegist = 'success';
+          this.$refs.successModal.showModal();
+          return new Promise(resolve => {
+            setTimeout(() => {
+              resolve();
+            }, 2000);
+          });
+        })
+        .then(() => {
+          this.onRegist = 'none';
+          this.commitOnRunning('STOP');
+          this.$refs.successModal.hideModal();
         })
         .catch(err => {
           this.onRegist = 'error';
-          if (
-            err.response != null &&
-            err.response.data != null &&
-            err.response.data.error != null
-          ) {
-            this.error = 'Firebase Error : ' + err.response.data.error;
-          } else {
-            this.error = err;
-          }
+          this.$refs.errorModal.showModal(err, () => {
+            this.onRegist = 'none';
+            this.commitOnRunning('STOP');
+          });
         });
     }
   }

@@ -6,7 +6,7 @@ if (process.server) {
     const serviceAccount = require('../firebase-adminsdk.json');
     admin.initializeApp({
       credential: admin.credential.cert(serviceAccount),
-      databaseURL: 'https://hcdemoapp.firebaseio.com'
+      databaseURL: process.env.FIREBASE_DATABASE_URL
     });
   }
 }
