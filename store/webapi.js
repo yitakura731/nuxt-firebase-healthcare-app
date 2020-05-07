@@ -8,6 +8,7 @@ export const state = () => ({
   runResp: null,
   onRunning: 'STOP',
   onCapturing: 'NONE',
+  user: null,
   runs: [],
   foods: []
 });
@@ -24,6 +25,9 @@ export const mutations = {
   },
   onRunning(state, onRunning) {
     state.onRunning = onRunning;
+  },
+  user(state, user) {
+    state.user = user;
   },
   runs(state, runs) {
     state.runs = runs;
@@ -45,6 +49,9 @@ export const getters = {
   },
   onRunning: state => {
     return state.onRunning;
+  },
+  user: state => {
+    return state.user;
   },
   runs: state => {
     return state.runs;

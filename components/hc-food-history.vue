@@ -14,10 +14,8 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex';
-import firebase from 'firebase/app';
 import HcCalorieChart from '~/components/hc-calorie-chart.vue';
 import HcFoodHistoryItem from '~/components/hc-food-history-item.vue';
-import 'firebase/auth';
 
 export default {
   components: {
@@ -25,16 +23,10 @@ export default {
     'hc-food-history-item': HcFoodHistoryItem
   },
   computed: {
-    ...mapGetters({
-      foods: 'webapi/foods'
-    })
+    ...mapGetters('webapi', ['foods', 'user'])
   },
   mounted() {
-    firebase.auth().onAuthStateChanged(user => {
-      if (user) {
-        this.fetchFoods({ userId: user.uid });
-      }
-    });
+    this.fetchFoods({ userId: this.user.uid });
   },
   methods: {
     ...mapActions('webapi', ['fetchFoods'])

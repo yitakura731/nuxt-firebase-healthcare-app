@@ -108,10 +108,8 @@
 
 <script>
 import { mapGetters, mapMutations, mapActions } from 'vuex';
-import firebase from 'firebase/app';
 import HCRunningMap from '~/components/hc-running-map.vue';
 import HCSite from '~/components/hc-site.vue';
-import 'firebase/auth';
 
 export default {
   components: {
@@ -126,10 +124,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters({
-      onRunning: 'webapi/onRunning',
-      runResp: 'webapi/runResp'
-    }),
+    ...mapGetters('webapi', ['onRunning', 'runResp', 'user']),
     queryCalorie() {
       let retVal = -1;
       if (this.runResp != null) {
@@ -142,15 +137,6 @@ export default {
       }
       return retVal;
     }
-  },
-  mounted() {
-    firebase.auth().onAuthStateChanged(user => {
-      if (user) {
-        this.getCurrentUser(user.uid).then(user => {
-          this.userId = user.id;
-        });
-      }
-    });
   },
   methods: {
     ...mapMutations({
@@ -171,7 +157,7 @@ export default {
     storeRun() {
       this.onRegist = 'registering';
       this.registRun({
-        userId: this.userId,
+        userId: this.user.uid,
         date: new Date(),
         distance: this.runResp.distance,
         calorie: this.runResp.calorie

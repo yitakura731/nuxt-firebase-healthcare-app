@@ -106,3 +106,4 @@ dist
 HCDemoApp/.nuxt
 HCDemoApp/node_modules
 app.env
+firebase-adminsdk.json

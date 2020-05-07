@@ -36,7 +36,8 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import Cookies from 'js-cookie';
+import { mapGetters, mapMutations } from 'vuex';
 import firebase from 'firebase/app';
 import 'firebase/auth';
 
@@ -45,11 +46,16 @@ export default {
     ...mapGetters('webapi', ['onRunning'])
   },
   methods: {
+    ...mapMutations('webapi', {
+      commitUser: 'user'
+    }),
     logout() {
       firebase
         .auth()
         .signOut()
         .then(() => {
+          this.commitUser(null);
+          Cookies.remove('__session');
           this.$router.push('/');
         });
     }

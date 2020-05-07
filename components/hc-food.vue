@@ -91,11 +91,9 @@
 
 <script>
 import { mapGetters, mapMutations, mapActions } from 'vuex';
-import firebase from 'firebase/app';
 import HCFoodCamera from '~/components/hc-food-camera.vue';
 import HCVisionDetail from '~/components/hc-vision-detail.vue';
 import HCSite from '~/components/hc-site.vue';
-import 'firebase/auth';
 
 export default {
   components: {
@@ -111,7 +109,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters('webapi', ['visionResp', 'onCapturing']),
+    ...mapGetters('webapi', ['visionResp', 'onCapturing', 'user']),
     queryCalorie() {
       let retVal = -1;
       if (
@@ -127,15 +125,6 @@ export default {
       }
       return retVal;
     }
-  },
-  mounted() {
-    firebase.auth().onAuthStateChanged(user => {
-      if (user) {
-        this.getCurrentUser(user.uid).then(user => {
-          this.userId = user.id;
-        });
-      }
-    });
   },
   methods: {
     ...mapMutations({
@@ -153,7 +142,7 @@ export default {
     regist() {
       this.onRegist = 'registering';
       this.registFoods({
-        userId: this.userId,
+        userId: this.user.uid,
         date: new Date(),
         name: this.visionResp.newFood.name,
         calorie: this.visionResp.newFood.calorie

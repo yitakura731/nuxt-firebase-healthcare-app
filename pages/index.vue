@@ -71,6 +71,8 @@
 </template>
 
 <script>
+import { mapMutations } from 'vuex';
+import Cookies from 'js-cookie';
 import firebase from 'firebase/app';
 import 'firebase/auth';
 
@@ -82,21 +84,22 @@ export default {
       error: null
     };
   },
-  mounted() {
-    firebase.auth().onAuthStateChanged(user => {
-      if (user) {
-        this.$router.push('/meal');
-      }
-    });
-  },
   methods: {
+    ...mapMutations('webapi', {
+      commitUser: 'user'
+    }),
     localLogin(event) {
       const email = this.email;
       const password = this.password;
       firebase
         .auth()
         .signInWithEmailAndPassword(email, password)
-        .then(user => {
+        .then(resp => {
+          this.commitUser({ uid: resp.user.uid });
+          return resp.user.getIdToken(true);
+        })
+        .then(token => {
+          Cookies.set('__session', token);
           this.$router.push('/meal');
         })
         .catch(error => {
@@ -107,7 +110,12 @@ export default {
       firebase
         .auth()
         .signInWithPopup(new firebase.auth.GoogleAuthProvider())
-        .then(user => {
+        .then(resp => {
+          this.commitUser({ uid: resp.user.uid });
+          return resp.user.getIdToken(true);
+        })
+        .then(token => {
+          Cookies.set('__session', token);
           this.$router.push('/meal');
         })
         .catch(error => {
@@ -118,7 +126,12 @@ export default {
       firebase
         .auth()
         .signInWithPopup(new firebase.auth.GithubAuthProvider())
-        .then(user => {
+        .then(resp => {
+          this.commitUser({ uid: resp.user.uid });
+          return resp.user.getIdToken(true);
+        })
+        .then(token => {
+          Cookies.set('__session', token);
           this.$router.push('/meal');
         })
         .catch(error => {

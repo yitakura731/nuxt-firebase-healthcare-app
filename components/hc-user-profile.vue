@@ -37,8 +37,7 @@
 </template>>
 
 <script>
-import firebase from 'firebase/app';
-import 'firebase/auth';
+import { mapGetters } from 'vuex';
 
 export default {
   data() {
@@ -49,15 +48,14 @@ export default {
       error: null
     };
   },
+  computed: {
+    ...mapGetters('webapi', ['user'])
+  },
   mounted() {
-    firebase.auth().onAuthStateChanged(user => {
-      if (user) {
-        this.$store.dispatch('webapi/getCurrentUser', user.uid).then(user => {
-          this.name = user.name;
-          this.height = user.height;
-          this.weight = user.weight;
-        });
-      }
+    this.$store.dispatch('webapi/getCurrentUser', this.user.uid).then(user => {
+      this.name = user.name;
+      this.height = user.height;
+      this.weight = user.weight;
     });
   }
 };
