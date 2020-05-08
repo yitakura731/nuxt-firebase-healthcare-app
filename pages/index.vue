@@ -66,6 +66,19 @@
           </b-button>
         </b-card>
       </b-col>
+      <b-col md="1" />
+      <b-col md="4" class="text-center">
+        <b-card class="card-area m-2">
+          <b-button
+            block
+            size="md"
+            variant="info"
+            @click="createAccount"
+          >
+            <span class="ml-2">新規ユーザー登録</span>
+          </b-button>
+        </b-card>
+      </b-col>
     </b-row>
   </b-container>
 </template>
@@ -88,6 +101,9 @@ export default {
     ...mapMutations('webapi', {
       commitUser: 'user'
     }),
+    createAccount(event) {
+      this.$router.push('/account');
+    },
     localLogin(event) {
       const email = this.email;
       const password = this.password;

@@ -90,6 +90,20 @@ export const actions = {
     await db.collection('meals').add(food);
     await dispatch('fetchFoods', food);
   },
+  async registUser({ dispatch }, user) {
+    const response = await firebase
+      .auth()
+      .createUserWithEmailAndPassword(user.email, user.passwd);
+    await db
+      .collection('users')
+      .doc(response.user.uid)
+      .set({
+        displayName: user.name,
+        height: user.height,
+        weight: user.weight
+      });
+    return response.user;
+  },
   async fetchFoods({ commit }, arg) {
     const snapshot = await db
       .collection('meals')
