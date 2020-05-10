@@ -94,15 +94,17 @@ export const actions = {
     const response = await firebase
       .auth()
       .createUserWithEmailAndPassword(user.email, user.passwd);
+    return response.user;
+  },
+  async updateUser({ dispatch }, user) {
     await db
       .collection('users')
-      .doc(response.user.uid)
+      .doc(user.uid)
       .set({
         displayName: user.name,
         height: user.height,
         weight: user.weight
       });
-    return response.user;
   },
   async fetchFoods({ commit }, arg) {
     const snapshot = await db
@@ -129,8 +131,9 @@ export const actions = {
       .collection('users')
       .doc(uid)
       .get();
-    const retVal = {};
+    let retVal = null;
     if (snapshot.exists) {
+      retVal = {};
       retVal.id = uid;
       retVal.name = snapshot.data().displayName;
       retVal.height = snapshot.data().height;

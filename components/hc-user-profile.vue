@@ -37,7 +37,7 @@
 </template>>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 
 export default {
   data() {
@@ -52,11 +52,14 @@ export default {
     ...mapGetters('webapi', ['user'])
   },
   mounted() {
-    this.$store.dispatch('webapi/getCurrentUser', this.user.uid).then(user => {
+    this.getCurrentUser(this.user.uid).then(user => {
       this.name = user.name;
       this.height = user.height;
       this.weight = user.weight;
     });
+  },
+  methods: {
+    ...mapActions('webapi', ['getCurrentUser'])
   }
 };
 </script>>

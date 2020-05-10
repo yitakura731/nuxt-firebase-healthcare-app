@@ -24,7 +24,7 @@ export default function({ req, route, store, redirect }) {
     }
   } else {
     const user = store.state.webapi.user;
-    if (!user && !(route.path === '/' || route.path === '/account')) {
+    if (!user && route.path !== '/') {
       Cookies.remove('__session');
       redirect('/');
     }
