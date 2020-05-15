@@ -1,13 +1,16 @@
 <template>
-  <div v-if="runs != null && runs.length > 0">
-    <hc-calorie-chart
-      :data="runs"
-      :height="400"
-      class="border rounded bg-light mx-1 mt-1 mb-3"
-    />
-    <hr class="my-1">
-    <div v-for="(run, index) in runs.slice(0, 3)" :key="run.index">
-      <hc-running-history-item :run="run" :index="index" />
+  <div v-if="runs != null && runs.length > 0" class="h-100">
+    <div class="d-flex flex-column h-100">
+      <hc-calorie-chart
+        :data="runs"
+        :height="chartHeight"
+        class="border rounded bg-light mx-1 mt-1 mb-2"
+      />
+      <div class="flex-fill border rounded histroy-area m-1">
+        <div v-for="(run, index) in runs.slice(0, 12)" :key="run.index">
+          <hc-running-history-item :run="run" :index="index" />
+        </div>
+      </div>
     </div>
   </div>
 </template>>
@@ -23,7 +26,14 @@ export default {
     'hc-calorie-chart': HcCalorieChart
   },
   computed: {
-    ...mapGetters('webapi', ['runs', 'user'])
+    ...mapGetters('webapi', ['runs', 'user']),
+    chartHeight() {
+      if (process.client) {
+        return window.innerWidth;
+      } else {
+        return 100;
+      }
+    }
   },
   mounted() {
     this.fetchRuns({ userId: this.user.uid });
@@ -33,3 +43,10 @@ export default {
   }
 };
 </script>>
+
+<style scoped>
+.histroy-area {
+  overflow-y: scroll;
+  height: 150px;
+}
+</style>

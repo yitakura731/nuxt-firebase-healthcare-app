@@ -1,9 +1,19 @@
 <template>
-  <div class="hc-camera-root d-flex flex-column align-items-center">
-    <video ref="video" class="hc-video mt-2" autoplay playsinline />
-    <div v-show="onCapturing !== 'NONE'">
-      <canvas ref="canvas" height="340px" width="340px" class="hc-canvas" />
-    </div>
+  <div class="d-flex flex-column align-items-center position-relative">
+    <video 
+      ref="video" 
+      class="hc-video" 
+      autoplay
+      :style="cameraStyle "
+      playsinline
+    />
+    <canvas 
+      v-show="onCapturing !== 'NONE'" 
+      ref="canvas"
+      :height="cameraHeight" 
+      :width="cameraWidth" 
+      class="hc-canvas position-absolute"
+    />
   </div>
 </template>
 
@@ -19,7 +29,38 @@ export default {
     };
   },
   computed: {
-    ...mapGetters('webapi', ['onCapturing'])
+    ...mapGetters('webapi', ['onCapturing']),
+    cameraHeight() {
+      if (process.client) {
+        const height = window.innerHeight;
+        const width = window.innerWidth;
+        if (height > width) {
+          return width;
+        } else {
+          return height;
+        }
+      } else {
+        return 100;
+      }
+    },
+    cameraWidth() {
+      if (process.client) {
+        const height = window.innerHeight;
+        const width = window.innerWidth;
+        if (height > width) {
+          return width;
+        } else {
+          return height;
+        }
+      } else {
+        return 100;
+      }
+    },
+    cameraStyle() {
+      return (
+        'width: ' + this.cameraWidth + 'px; height: ' + this.cameraHeight + 'px'
+      );
+    }
   },
   watch: {
     onCapturing(newVal, oldVal) {
@@ -52,7 +93,7 @@ export default {
     capture() {
       this.canvas = this.$refs.canvas;
       const ctx = this.canvas.getContext('2d');
-      ctx.drawImage(this.video, 0, 0, 340, 340);
+      ctx.drawImage(this.video, 0, 0, this.cameraHeight, this.cameraWidth);
       const imgData = this.canvas.toDataURL('image/webp').split(',')[1];
       const retVal = {};
       this.execGoogleVisionApi(imgData)
@@ -208,21 +249,12 @@ export default {
 </script>
 
 <style>
-.hc-camera-root {
-  position: relative;
-  width: 350px;
-}
-
 .hc-video {
   object-fit: fill;
-  width: 340px;
-  height: 340px;
 }
 
 .hc-canvas {
-  position: absolute;
   top: 0px;
   left: 0px;
-  border: 5px solid lightgreen;
 }
 </style>

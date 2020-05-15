@@ -1,35 +1,47 @@
 <template>
-  <b-navbar fixed="bottom" class="border-top bg-white pt-1 pb-0">
+  <b-navbar class="border-top bg-light py-0">
     <div 
       v-if="onRunning !== 'RUNNING'" 
       class="d-flex justify-content-around w-100"
     >
       <b-button 
-        class="bg-white border-0 hc-footer-text"
+        class="bg-light border-0 hc-footer-text"
       >
         <nuxt-link to="/meal" class="text-dark">
           <font-awesome-icon icon="utensils" />
+          <div class="text-size">
+            食事管理
+          </div>
         </nuxt-link>
       </b-button>
       <b-button 
-        class="bg-white border-0 hc-footer-text"
+        class="bg-light border-0 hc-footer-text"
       >
         <nuxt-link to="/exercise" class="text-dark">
           <font-awesome-icon icon="running" />
+          <div class="text-size">
+            運動管理
+          </div>
         </nuxt-link>
       </b-button>
       <b-button 
-        class="bg-white border-0 hc-footer-text"
+        class="bg-light border-0 hc-footer-text"
       >
         <nuxt-link to="/profile" class="text-dark">
           <font-awesome-icon icon="user-circle" />
+          <div class="text-size">
+            アカウント
+          </div>
         </nuxt-link>
       </b-button>
       <b-button 
-        class="bg-white text-dark border-0 hc-footer-text" 
+        class="bg-light text-dark border-0 hc-footer-text" 
         @click="logout"
       >
         <font-awesome-icon icon="sign-out-alt" />
+        <div class="text-size">
+          サインアウト
+        </div>
       </b-button>
     </div>
   </b-navbar>
@@ -66,5 +78,9 @@ export default {
 <style scoped>
 .hc-footer-text {
   font-size: 22px;
+}
+
+.text-size {
+  font-size: 10px;
 }
 </style>

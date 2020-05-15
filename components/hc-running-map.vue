@@ -41,7 +41,7 @@
           disableDefaultUi: false
         }"
         map-type-id="terrain"
-        style="width: 340px; height: 320px"
+        :style="mapStyle "
       >
         <GmapMarker :position="location" :icon="icon" />
         <gmap-polyline 
@@ -79,7 +79,21 @@ export default {
     };
   },
   computed: {
-    ...mapGetters('webapi', ['onRunning'])
+    ...mapGetters('webapi', ['onRunning']),
+    mapStyle() {
+      let height = 100;
+      let width = 100;
+      if (process.client) {
+        height = window.innerHeight;
+        width = window.innerWidth;
+      }
+
+      if (height > width) {
+        return 'width: ' + width + 'px; height: ' + width + 'px';
+      } else {
+        return 'width: ' + height + 'px; height: ' + height + 'px';
+      }
+    }
   },
   watch: {
     onRunning(newVal, oldVal) {

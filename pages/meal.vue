@@ -1,21 +1,30 @@
 <template>
-  <div class="p-1">
-    <b-tabs fill>
-      <b-tab title-link-class="text-dark">
-        <template v-slot:title>
-          <font-awesome-icon :icon="['fas', 'camera']" />
-          <a class="ml-1">カロリー計測</a>
-        </template>
-        <hc-food />
-      </b-tab>
-      <b-tab title-link-class="text-dark">
-        <template v-slot:title>
-          <font-awesome-icon :icon="['fas', 'chart-bar']" />
-          <a class="ml-1">履歴</a>
-        </template>
-        <hc-food-history />
-      </b-tab>
-    </b-tabs>
+  <div class="d-flex flex-column">
+    <b-button-group class="py-1 px-4 hc-meal-tabs">
+      <b-button 
+        variant="primary" 
+        class="px-0" 
+        :pressed="target==='camera'"
+        @click="setTarget('camera')"
+      >
+        <font-awesome-icon :icon="['fas', 'camera']" />
+        <a class="ml-1">カロリー計測</a>
+      </b-button>
+      <b-button 
+        variant="primary" 
+        :pressed="target==='history'"
+        @click="setTarget('history')"
+      >
+        <font-awesome-icon :icon="['fas', 'chart-bar']" />
+        <a class="ml-1">履歴</a>
+      </b-button>
+    </b-button-group>
+    <div v-show="target==='camera'" class="flex-grow-1">
+      <hc-food />
+    </div>
+    <div v-show="target==='history'" class="flex-grow-1">
+      <hc-food-history />
+    </div>
   </div>
 </template>
 
@@ -26,8 +35,24 @@ import HCFood from '~/components/hc-food.vue';
 export default {
   layout: 'main',
   components: {
-    'hc-food-history': HCFoodHistory,
-    'hc-food': HCFood
+    'hc-food': HCFood,
+    'hc-food-history': HCFoodHistory
+  },
+  data() {
+    return {
+      target: 'camera'
+    };
+  },
+  methods: {
+    setTarget(input) {
+      this.target = input;
+    }
   }
 };
 </script>
+
+<style>
+.hc-meal-tabs {
+  background-color: rgb(115, 160, 243);
+}
+</style>

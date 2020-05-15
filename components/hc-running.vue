@@ -1,95 +1,100 @@
 <template>
-  <div>
-    <hc-running-map />
-    <div class="d-flex px-5 mb-1">
-      <b-button 
-        v-if="onRunning !== 'RUNNING'"
-        pill
-        variant="success"
-        class="flex-fill border-0" 
-        @click="startRun()"
-      >
-        <font-awesome-icon :icon="['fas', 'running']" />
-        走る
-      </b-button>
-      <b-button 
-        v-if="onRunning === 'RUNNING'"
-        pill
-        variant="warning" 
-        class="flex-fill border-0" 
-        @click="pendingRun()"
-      >
-        <font-awesome-icon :icon="['fas', 'walking']" />
-        止まる
-      </b-button>
-    </div>
-    <div v-if="onRunning === 'STOP'" class="m-1 bg-light border rounded">
-      <div 
-        class="d-flex justify-content-center align-items-center" 
-        style="height: 100px"
-      >
-        ランニングを開始してください
-      </div>
-    </div>
-    <div v-else-if="onRunning === 'PENDING' && runResp != null" class="m-1 border rounded">
-      <div class="d-flex">
-        <div class="flex-fill">
-          <div class="w-100 text-center">
-            <small class="mb-0">
-              走行距離(km)
-            </small>
-          </div>
-          <div class="w-100 text-center">
-            <h2 class="mb-0">
-              {{ runResp.distance.toFixed(2) }}
-            </h2>
-          </div>
-        </div>
-        <div class="flex-fill">
-          <div class="w-100 text-center">
-            <small class="mb-0">
-              消費カロリー(kcal)
-            </small>
-          </div>
-          <div class="w-100 text-center">
-            <h2 class="mb-0">
-              {{ runResp.calorie }}
-            </h2>
-          </div>
-        </div>
-      </div>
-      <div class="d-flex">
-        <b-button
-          v-b-modal.site-modal 
-          variant="danger"
-          class="flex-fill m-1"
+  <div class="d-flex flex-column h-100">
+    <div class="mt-1 position-relative">
+      <hc-running-map />
+      <div class="running-btn position-absolute">
+        <b-button 
+          v-if="onRunning !== 'RUNNING'"
+          pill
+          size="lg"
+          variant="primary"
+          class="flex-fill border-0" 
+          @click="startRun()"
         >
-          <font-awesome-icon :icon="['fas', 'registered']" />
-          <a>楽天</a>
+          <font-awesome-icon :icon="['fas', 'play']" />
         </b-button>
         <b-button 
-          :disabled="onRegist !== 'none'" 
-          variant="success"
-          class="flex-fill m-1" 
-          @click="storeRun()"
+          v-if="onRunning === 'RUNNING'"
+          pill
+          size="lg"
+          variant="warning" 
+          class="flex-fill border-0" 
+          @click="pendingRun()"
         >
-          <font-awesome-icon :icon="['fas', 'cloud-upload-alt']" />
-          <a>登録</a>
-        </b-button>
-        <b-button 
-          variant="secondary" 
-          class="flex-fill m-1" 
-          @click="stopRun()"
-        >
-          <font-awesome-icon :icon="['fas', 'stop-circle']" />
-          <a>終了</a>
+          <font-awesome-icon :icon="['fas', 'pause']" />
         </b-button>
       </div>
     </div>
-    <div v-else class="m-1 running-area border rounded">
+    <div class="flex-fill border rounded bg-light h-100 m-1">
       <div 
-        class="d-flex justify-content-center align-items-center" 
-        style="height: 100px"
+        v-if="onRunning === 'STOP'"
+        class="d-flex justify-content-center align-items-center h-100" 
+      >
+        <div>
+          ランニングを開始してください
+        </div>
+      </div>
+      <div 
+        v-else-if="onRunning === 'PENDING' && runResp != null"
+        class="d-flex flex-column h-100"
+      >
+        <div class="d-flex flex-fill align-items-center">
+          <div class="flex-fill">
+            <div class="w-100 text-center">
+              <small class="mb-0">
+                走行距離(km)
+              </small>
+            </div>
+            <div class="w-100 text-center">
+              <h2 class="mb-0">
+                {{ runResp.distance.toFixed(2) }}
+              </h2>
+            </div>
+          </div>
+          <div class="flex-fill">
+            <div class="w-100 text-center">
+              <small class="mb-0">
+                消費カロリー(kcal)
+              </small>
+            </div>
+            <div class="w-100 text-center">
+              <h2 class="mb-0">
+                {{ runResp.calorie }}
+              </h2>
+            </div>
+          </div>
+        </div>
+        <div class="d-flex">
+          <b-button
+            v-b-modal.site-modal 
+            variant="danger"
+            class="flex-fill m-1"
+          >
+            <font-awesome-icon :icon="['fas', 'registered']" />
+            <a>楽天</a>
+          </b-button>
+          <b-button 
+            :disabled="onRegist !== 'none'" 
+            variant="success"
+            class="flex-fill m-1" 
+            @click="storeRun()"
+          >
+            <font-awesome-icon :icon="['fas', 'cloud-upload-alt']" />
+            <a>登録</a>
+          </b-button>
+          <b-button 
+            variant="secondary" 
+            class="flex-fill m-1" 
+            @click="stopRun()"
+          >
+            <font-awesome-icon :icon="['fas', 'stop-circle']" />
+            <a>終了</a>
+          </b-button>
+        </div>
+      </div>
+      <div
+        v-else
+        class="d-flex justify-content-center align-items-center h-100" 
       >
         <font-awesome-icon :icon="['fas', 'running']" class="mr-2" />
         ランニング中
@@ -188,5 +193,12 @@ export default {
 <style scoped>
 .running-area {
   background-color: rgb(149, 211, 160);
+}
+
+.running-btn {
+  width: 100px;
+  margin-left: -15px;
+  bottom: 10px;
+  left: 50%;
 }
 </style>

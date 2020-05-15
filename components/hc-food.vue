@@ -1,81 +1,98 @@
 <template>
-  <div class="mb-3">
-    <hc-food-camera />
-    <div class="w-100 mt-3 d-flex justify-content-center">
-      <b-button 
-        pill
-        :disabled="onCapturing === 'CAPTURING'"  
-        class="bg-success border-0 w-75" 
-        @click="capture()"
-      >
-        <font-awesome-icon :icon="['fas', 'utensils']" />
-        撮影
-      </b-button>
-    </div>
-    <div v-if="onCapturing === 'CAPTURED'" class="mt-2 border rounded">
-      <div class="d-flex align-items-center" style="height: 60px">
-        <div class="w-75 text-wrap ml-2">
-          {{ visionResp.newFood.name }}
-        </div>
-        <h4 class="text-info mb-0">
-          {{ visionResp.newFood.calorie }}
-        </h4>
-        <div class="mx-2 mt-2">
-          kcal
-        </div>
-      </div>
-      <div class="d-flex">
+  <div class="d-flex flex-column h-100">
+    <div class="mt-1 position-relative">
+      <hc-food-camera />
+      <div class="capture-btn position-absolute">
         <b-button 
-          v-b-modal.vision-detail-modal 
-          variant="info" 
-          class="flex-fill m-1"
+          pill
+          size="lg"
+          :disabled="onCapturing === 'CAPTURING'"  
+          class="bg-primary border-0" 
+          @click="capture()"
         >
-          <font-awesome-icon :icon="['fas', 'glasses']" />
-          詳細
-        </b-button>
-        <b-button 
-          v-b-modal.site-modal 
-          :disabled="visionResp.newFood.calorie === 'N/A'" 
-          variant="danger" 
-          class="flex-fill m-1"
-        >
-          <font-awesome-icon :icon="['fas', 'registered']" />
-          楽天
-        </b-button>
-        <b-button 
-          variant="success" 
-          :disabled="visionResp.newFood.calorie === 'N/A' || onRegist !== 'none'" 
-          class="flex-fill m-1" 
-          @click="regist()"
-        >
-          <font-awesome-icon :icon="['fas', 'cloud-upload-alt']" />
-          登録
-        </b-button>
-        <b-button 
-          variant="secondary" 
-          class="flex-fill m-1" 
-          @click="reset()"
-        >
-          <font-awesome-icon :icon="['fas', 'times']" />
-          終了
+          <font-awesome-icon :icon="['fas', 'camera']" />
         </b-button>
       </div>
     </div>
-    <div v-else-if="onCapturing === 'CAPTURING'" class="border rounded mt-2">
+    <div class="flex-fill border rounded bg-light h-100 m-2">
       <div 
-        class="bg-light d-flex justify-content-center align-items-center" 
-        style="height: 116px"
+        v-if="onCapturing === 'CAPTURED'" 
+        class="d-flex flex-column h-100"
       >
-        解析中
-        <b-spinner label="Loading..." variant="success" class="ml-2" />
+        <div class="flex-fill">
+          <div class="d-flex align-items-center h-100">
+            <div class="w-75 text-wrap ml-2">
+              {{ visionResp.newFood.name }}
+            </div>
+            <h4 class="text-info mb-0">
+              {{ visionResp.newFood.calorie }}
+            </h4>
+            <div class="mx-2 mt-2">
+              kcal
+            </div>
+          </div>
+        </div>
+        <div class="d-flex">
+          <b-button 
+            v-b-modal.vision-detail-modal 
+            variant="info" 
+            class="flex-fill m-1"
+          >
+            <font-awesome-icon :icon="['fas', 'glasses']" />
+            <div class="btn-text-size">
+              詳細
+            </div>
+          </b-button>
+          <b-button 
+            v-b-modal.site-modal 
+            :disabled="visionResp.newFood.calorie === 'N/A'" 
+            variant="danger" 
+            class="flex-fill m-1"
+          >
+            <font-awesome-icon :icon="['fas', 'registered']" />
+            <div class="btn-text-size">
+              楽天
+            </div>
+          </b-button>
+          <b-button 
+            variant="success" 
+            :disabled="visionResp.newFood.calorie === 'N/A' || onRegist !== 'none'" 
+            class="flex-fill m-1" 
+            @click="regist()"
+          >
+            <font-awesome-icon :icon="['fas', 'cloud-upload-alt']" />
+            <div class="btn-text-size">
+              登録
+            </div>
+          </b-button>
+          <b-button 
+            variant="secondary" 
+            class="flex-fill m-1" 
+            @click="reset()"
+          >
+            <font-awesome-icon :icon="['fas', 'times']" />
+            <div class="btn-text-size">
+              終了
+            </div>
+          </b-button>
+        </div>
       </div>
-    </div>
-    <div v-else class="border rounded mt-2">
       <div 
-        class="bg-light d-flex justify-content-center align-items-center" 
-        style="height: 116px"
+        v-else-if="onCapturing === 'CAPTURING'"
+        class="d-flex justify-content-center align-items-center h-100"
       >
-        撮影してください
+        <div>
+          解析中
+          <b-spinner label="Loading..." variant="success" class="ml-2" />
+        </div>
+      </div>
+      <div 
+        v-else 
+        class="d-flex justify-content-center align-items-center h-100"
+      >
+        <div>
+          撮影してください
+        </div>
       </div>
     </div>
     <hc-vision-detail />
@@ -169,3 +186,16 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.btn-text-size {
+  font-size: 14px;
+}
+
+.capture-btn {
+  width: 100px;
+  margin-left: -10px;
+  bottom: 8px;
+  left: 50%;
+}
+</style>
