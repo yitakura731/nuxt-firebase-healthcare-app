@@ -8,6 +8,7 @@ https://hc-demo-app-01.herokuapp.com/
 ### 1.1 Meal management
 
 You can record the calories of the meal you eat by capturing with a camera.
+
 <img src="capture/meal.png" width="200">
 
 ### 1.2 Excercise management
