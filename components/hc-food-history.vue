@@ -4,7 +4,8 @@
       <hc-calorie-chart
         :data="foods"
         :height="chartHeight"
-        class="border rounded bg-light mx-1 mt-1 mb-2"
+        class="border rounded bg-light mx-1 mt-1 mb-2
+        "
       />
       <div class="flex-fill border rounded histroy-area m-1">
         <div v-for="(food, index) in foods.slice(0, 10)" :key="food.index">
