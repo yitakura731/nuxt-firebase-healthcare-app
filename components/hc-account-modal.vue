@@ -1,22 +1,12 @@
 <template>
-  <b-modal 
-    ref="accountModal"
-    hide-header
-    hide-footer
-    body-class="p-0"
-  >
+  <b-modal ref="accountModal" hide-header hide-footer body-class="p-0">
     <div class="text-center py-2 text-white bg-info">
-      <h5 class="mb-0">
-        新規ユーザー登録
-      </h5>
+      <h5 class="mb-0">新規ユーザー登録</h5>
     </div>
-    <hr class="y-0 my-0">
+    <hr class="y-0 my-0" />
     <div class="p-3">
       <b-form>
-        <b-form-group
-          label="メールアドレス"
-          label-for="input-email"
-        >
+        <b-form-group label="メールアドレス" label-for="input-email">
           <b-form-input
             id="input-email"
             v-model="email"
@@ -69,7 +59,7 @@
           />
         </b-form-group>
       </b-form>
-      
+
       <div class="d-flex w-100">
         <b-button class="flex-fill m-1" @click="hideModal">
           キャンセル
@@ -77,10 +67,10 @@
         <b-button class="flex-fill m-1" variant="info" @click="regist">
           <span>
             {{ title }}
-            <b-spinner 
-              v-show="onRegist" 
-              small 
-              label="Loading..." 
+            <b-spinner
+              v-show="onRegist"
+              small
+              label="Loading..."
               variant="success"
               class="ml-2"
             />
@@ -88,13 +78,7 @@
         </b-button>
       </div>
 
-      <b-alert
-        v-if="error"
-        show
-        variant="danger"
-        dismissible
-        class="mt-2"
-      >
+      <b-alert v-if="error" show variant="danger" dismissible class="mt-2">
         {{ error }}
       </b-alert>
     </div>
@@ -104,8 +88,7 @@
 <script>
 import { mapMutations, mapActions } from 'vuex';
 import Cookies from 'js-cookie';
-import firebase from 'firebase/app';
-import 'firebase/auth';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 export default {
   data() {
@@ -134,7 +117,7 @@ export default {
     ...mapMutations('webapi', {
       commitUser: 'user'
     }),
-    showModal(arg, cbk) {
+    showModal(arg) {
       this.mode = arg.mode;
       this.email = arg.email;
       this.$refs.accountModal.show();
@@ -161,7 +144,9 @@ export default {
             passwd: this.passwd
           });
         } else {
-          user = firebase.auth().currentUser;
+          const auth = getAuth();
+          const response = await onAuthStateChanged(auth);
+          user = response;
         }
         await this.updateUser({
           uid: user.uid,

@@ -2,11 +2,9 @@
   <div>
     <b-container fluid class="contents-area vh-100">
       <div class="pt-5">
-        <p class="welcome-area">
-          Healthcare Demo Application
-        </p>
+        <p class="welcome-area">Healthcare Demo Application</p>
       </div>
-      <b-row align-h="center" align-v="center" class="pt-3 ">
+      <b-row align-h="center" align-v="center" class="pt-3">
         <b-col md="4">
           <b-card class="card-area m-2">
             <b-form-group label="メールアドレス" label-size="sm">
@@ -26,8 +24,8 @@
                 @keydown.enter="localLogin"
               />
             </b-form-group>
-            <div class="text-center">
-              <b-btn variant="info" size="sm" block @click="localLogin">
+            <div class="text-center mt-4">
+              <b-btn class="w-75" variant="info" @click="localLogin">
                 ログイン
               </b-btn>
             </div>
@@ -52,7 +50,10 @@
               variant="dark"
               @click="socialLogin('Github')"
             >
-              <font-awesome-icon :icon="['fab', 'github']" style="font-size: 24px" />
+              <font-awesome-icon
+                :icon="['fab', 'github']"
+                style="font-size: 24px"
+              />
               <span class="ml-2">Githubでログイン</span>
             </b-button>
             <b-button
@@ -62,7 +63,10 @@
               variant="danger"
               @click="socialLogin('Google')"
             >
-              <font-awesome-icon :icon="['fab', 'google']" style="font-size: 24px" />
+              <font-awesome-icon
+                :icon="['fab', 'google']"
+                style="font-size: 24px"
+              />
               <span class="ml-2">Googleでログイン</span>
             </b-button>
           </b-card>
@@ -70,13 +74,8 @@
         <b-col md="1" />
         <b-col md="4" class="text-center">
           <b-card class="card-area m-2">
-            <b-button
-              block
-              size="md"
-              variant="info"
-              @click="createAccount"
-            >
-              <span class="ml-2">新規ユーザー登録</span>
+            <b-button class="w-75" variant="info" @click="createAccount">
+              <span>新規ユーザー登録</span>
             </b-button>
           </b-card>
         </b-col>
@@ -89,8 +88,13 @@
 <script>
 import { mapMutations, mapActions } from 'vuex';
 import Cookies from 'js-cookie';
-import firebase from 'firebase/app';
-import 'firebase/auth';
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  GoogleAuthProvider,
+  GithubAuthProvider
+} from 'firebase/auth';
 import HCAccountModal from '~/components/hc-account-modal.vue';
 
 export default {
@@ -109,14 +113,13 @@ export default {
       commitUser: 'user'
     }),
     ...mapActions('webapi', ['getCurrentUser']),
-    async localLogin(event) {
+    async localLogin() {
       const email = this.email;
       const password = this.password;
       try {
-        const resp = await firebase
-          .auth()
-          .signInWithEmailAndPassword(email, password);
-        const token = await resp.user.getIdToken(true);
+        const auth = getAuth();
+        const credential = signInWithEmailAndPassword(auth, email, password);
+        const token = await credential.getIdToken(true);
         this.commitUser({ uid: resp.user.uid });
         Cookies.set('__session', token);
         this.$router.push('/meal');
@@ -128,17 +131,18 @@ export default {
       }
     },
     async socialLogin(providerType) {
-      let provider = null;
-      if (providerType === 'Google') {
-        provider = new firebase.auth.GoogleAuthProvider();
-      } else if (providerType === 'Github') {
-        provider = new firebase.auth.GithubAuthProvider();
-      }
       try {
-        const resp = await firebase.auth().signInWithPopup(provider);
-        const user = await this.getCurrentUser(resp.user.uid);
+        let credential = null;
+        const auth = getAuth();
+        const result = await signInWithPopup(auth, provider);
+        if (providerType === 'Google') {
+          credential = GoogleAuthProvider.credentialFromResult(result);
+        } else if (providerType === 'Github') {
+          credential = GithubAuthProvider.credentialFromResult(result);
+        }
+        const user = result.user;
         if (user) {
-          const token = await resp.user.getIdToken(true);
+          const token = credential.accessToken;
           this.commitUser({ uid: resp.user.uid });
           Cookies.set('__session', token);
           this.$router.push('/meal');
@@ -155,7 +159,7 @@ export default {
         this.error = error;
       }
     },
-    createAccount(event) {
+    createAccount() {
       this.$refs.accountModal.showModal({
         mode: 'local',
         email: null
@@ -175,7 +179,6 @@ export default {
   font-size: 24px;
   color: white;
   text-align: center;
-  font-family: Tahoma;
 }
 
 .card-area {

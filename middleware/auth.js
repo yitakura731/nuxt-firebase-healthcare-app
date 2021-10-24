@@ -1,6 +1,6 @@
 import Cookies from 'js-cookie';
 
-export default function({ req, route, store, redirect }) {
+export default function ({ req, route, store, redirect }) {
   if (process.server) {
     const firebaseAdmin = require('@/plugins/firebase-admin').default;
     const cookieparser = require('cookieparser');
@@ -9,11 +9,11 @@ export default function({ req, route, store, redirect }) {
       firebaseAdmin
         .auth()
         .verifyIdToken(token)
-        .then(decodedToken => {
+        .then((decodedToken) => {
           store.commit('webapi/user', { uid: decodedToken.uid });
         })
         // eslint-disable-next-line handle-callback-err
-        .catch(error => {
+        .catch(() => {
           store.commit('webapi/user', null);
           Cookies.remove('__session');
           redirect('/');

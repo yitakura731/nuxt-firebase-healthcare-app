@@ -1,17 +1,17 @@
 <template>
   <div class="d-flex flex-column align-items-center position-relative">
-    <video 
-      ref="video" 
-      class="hc-video" 
+    <video
+      ref="video"
+      class="hc-video"
       autoplay
-      :style="cameraStyle "
+      :style="cameraStyle"
       playsinline
     />
-    <canvas 
-      v-show="onCapturing !== 'NONE'" 
+    <canvas
+      v-show="onCapturing !== 'NONE'"
       ref="canvas"
-      :height="cameraHeight" 
-      :width="cameraWidth" 
+      :height="cameraHeight"
+      :width="cameraWidth"
       class="hc-canvas position-absolute"
     />
   </div>
@@ -63,7 +63,7 @@ export default {
     }
   },
   watch: {
-    onCapturing(newVal, oldVal) {
+    onCapturing(newVal) {
       if (newVal === 'CAPTURING') {
         this.capture();
       }
@@ -78,7 +78,7 @@ export default {
             facingMode: 'environment'
           }
         })
-        .then(stream => {
+        .then((stream) => {
           this.video.srcObject = stream;
           this.video.play();
         });
@@ -97,7 +97,7 @@ export default {
       const imgData = this.canvas.toDataURL('image/webp').split(',')[1];
       const retVal = {};
       this.execGoogleVisionApi(imgData)
-        .then(apiResp => {
+        .then((apiResp) => {
           // Fetch localized object detection result
           if (apiResp.responses[0].localizedObjectAnnotations != null) {
             retVal.objects = this.parseObjectLocalization(
@@ -138,7 +138,7 @@ export default {
             return this.getCalorie(retVal.objects[0].name);
           }
         })
-        .then(response => {
+        .then((response) => {
           if (response.data.length > 0) {
             const calorie = response.data[0].energ_kcal;
             const name = response.data[0].shrt_desc;
@@ -152,7 +152,7 @@ export default {
           this.visionResp(retVal);
           this.commitOnCapturing('CAPTURED');
         })
-        .catch(err => {
+        .catch((err) => {
           if (
             err.response != null &&
             err.response.data != null &&
@@ -200,7 +200,7 @@ export default {
     },
     parseLabelAnnotation(response) {
       const retVal = [];
-      response.forEach(elem => {
+      response.forEach((elem) => {
         retVal.push({
           id: elem.mid,
           name: elem.description,
@@ -222,7 +222,7 @@ export default {
           ctx.strokeStyle = 'Green';
           ctx.lineWidth = 4;
           retVal.validWords.push({
-            index: index,
+            index,
             text: description
           });
           for (let index2 = 0; index2 < 4; index2++) {
@@ -237,7 +237,7 @@ export default {
           }
         } else {
           retVal.inValidWords.push({
-            index: index,
+            index,
             text: description
           });
         }

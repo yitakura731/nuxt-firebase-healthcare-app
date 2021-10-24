@@ -1,28 +1,33 @@
 <template>
   <div class="d-flex flex-column">
     <b-button-group class="py-1 px-4 hc-meal-tabs">
-      <b-button 
-        variant="primary" 
-        class="px-0" 
-        :pressed="target==='camera'"
+      <b-button
+        variant="primary"
+        class="px-0"
+        :pressed="target === 'camera'"
         @click="setTarget('camera')"
       >
         <font-awesome-icon :icon="['fas', 'camera']" />
+
         <a class="ml-1">カロリー計測</a>
       </b-button>
-      <b-button 
-        variant="primary" 
-        :pressed="target==='history'"
+
+      <b-button
+        variant="primary"
+        :pressed="target === 'history'"
         @click="setTarget('history')"
       >
         <font-awesome-icon :icon="['fas', 'chart-bar']" />
+
         <a class="ml-1">履歴</a>
       </b-button>
     </b-button-group>
-    <div v-show="target==='camera'" class="flex-grow-1">
+
+    <div v-show="target === 'camera'" class="flex-grow-1">
       <hc-food />
     </div>
-    <div v-show="target==='history'" class="flex-grow-1">
+
+    <div v-show="target === 'history'" class="flex-grow-1">
       <hc-food-history />
     </div>
   </div>
@@ -30,19 +35,24 @@
 
 <script>
 import HCFoodHistory from '~/components/hc-food-history.vue';
+
 import HCFood from '~/components/hc-food.vue';
 
 export default {
-  layout: 'main',
   components: {
     'hc-food': HCFood,
+
     'hc-food-history': HCFoodHistory
   },
+
+  layout: 'main',
+
   data() {
     return {
       target: 'camera'
     };
   },
+
   methods: {
     setTarget(input) {
       this.target = input;

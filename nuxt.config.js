@@ -1,35 +1,34 @@
 const pkg = require('./package');
-require('dotenv').config({ path: './app.env' });
 
-// console.log(`GOOGLE_VISION_URL = ${process.env.GOOGLE_VISION_URL}`);
-// console.log(`GOOGLE_VISION_SECRET = ${process.env.GOOGLE_VISION_SECRET}`);
-// console.log(`GOOGLE_MAP_SECRET = ${process.env.GOOGLE_MAP_SECRET}`);
-// console.log(`RAKUTEN_SHOP_URL = ${process.env.RAKUTEN_SHOP_URL}`);
-// console.log(`RAKUTEN_SHOP_SECRET = ${process.env.RAKUTEN_SHOP_SECRET}`);
-// console.log(`CALORIE_API_URL = ${process.env.CALORIE_API_URL}`);
-// console.log(`CALORIE_API_HOST = ${process.env.CALORIE_API_HOST}`);
-// console.log(`CALORIE_API_SECRET = ${process.env.CALORIE_API_SECRET}`);
-// console.log(`FIREBASE_API_KEY = ${process.env.FIREBASE_API_KEY}`);
-// console.log(`FIREBASE_AUTH_DOMAIN = ${process.env.FIREBASE_AUTH_DOMAIN}`);
-// console.log(`FIREBASE_DATABASE_URL = ${process.env.FIREBASE_DATABASE_URL}`);
-// console.log(`FIREBASE_PROJECT_ID = ${process.env.FIREBASE_PROJECT_ID}`);
-// console.log(`FIREBASE_STORAGE_BACKET = ${process.env.FIREBASE_STORAGE_BACKET}`);
-// console.log(
-//   `FIREBASE_MESSAGING_SENSORID = ${process.env.FIREBASE_MESSAGING_SENSORID}`
-// );
-// console.log(`FIREBASE_APPID = ${process.env.FIREBASE_APPID}`);
-// console.log(`FIREBASE_MESURE_ID = ${process.env.FIREBASE_MESURE_ID}`);
+console.log(`G_VISION_URL = ${process.env.GOOGLE_VISION_URL}`);
+console.log(`G_VISION_SECRET = ${process.env.GOOGLE_VISION_SECRET}`);
+console.log(`G_MAP_SECRET = ${process.env.GOOGLE_MAP_SECRET}`);
+console.log(`R_SHOP_URL = ${process.env.RAKUTEN_SHOP_URL}`);
+console.log(`R_SHOP_SECRET = ${process.env.RAKUTEN_SHOP_SECRET}`);
+console.log(`C_API_URL = ${process.env.CALORIE_API_URL}`);
+console.log(`C_API_HOST = ${process.env.CALORIE_API_HOST}`);
+console.log(`C_API_SECRET = ${process.env.CALORIE_API_SECRET}`);
+console.log(`F_API_KEY = ${process.env.FIREBASE_API_KEY}`);
+console.log(`F_AUTH_DOMAIN = ${process.env.FIREBASE_AUTH_DOMAIN}`);
+console.log(`F_DATABASE_URL = ${process.env.FIREBASE_DATABASE_URL}`);
+console.log(`F_PROJECT_ID = ${process.env.FIREBASE_PROJECT_ID}`);
+console.log(`F_STORAGE_BACKET = ${process.env.FIREBASE_STORAGE_BACKET}`);
+console.log(
+  `F_MESSAGING_SENSORID = ${process.env.FIREBASE_MESSAGING_SENSORID}`
+);
+console.log(`F_APPID = ${process.env.FIREBASE_APPID}`);
+console.log(`F_MESURE_ID = ${process.env.FIREBASE_MESURE_ID}`);
 
 module.exports = {
-  mode: 'universal',
+  ssr: false,
 
   router: {
     middleware: 'auth'
   },
 
   /*
-  ** Headers of the page
-  */
+   ** Headers of the page
+   */
   head: {
     title: 'HC Demo App',
     meta: [
@@ -41,18 +40,18 @@ module.exports = {
   },
 
   /*
-  ** Customize the progress-bar color
-  */
+   ** Customize the progress-bar color
+   */
   loading: { color: '#fff' },
 
   /*
-  ** Global CSS
-  */
+   ** Global CSS
+   */
   css: [],
 
   /*
-  ** Plugins to load before mounting the App
-  */
+   ** Plugins to load before mounting the App
+   */
   plugins: ['~/plugins/firebase', '~/plugins/vue2-google-maps.js'],
 
   fontawesome: {
@@ -73,14 +72,13 @@ module.exports = {
   },
 
   /*
-  ** Nuxt.js modules
-  */
+   ** Nuxt.js modules
+   */
   modules: [
     '@nuxtjs/axios',
     'bootstrap-vue/nuxt',
     '@nuxtjs/pwa',
     ['@nuxtjs/moment', ['ja']],
-    ['@nuxtjs/dotenv', { filename: './app.env' }],
     'nuxt-fontawesome'
   ],
 
@@ -114,12 +112,12 @@ module.exports = {
   },
 
   /*
-  ** Build configuration
-  */
+   ** Build configuration
+   */
   build: {
     /*
-    ** You can extend webpack config here
-    */
+     ** You can extend webpack config here
+     */
     transpile: [/^vue2-google-maps($|\/)/],
     extend(config, ctx) {
       // Run ESLint on save

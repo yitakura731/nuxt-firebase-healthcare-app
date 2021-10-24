@@ -1,6 +1,6 @@
 <template>
-  <b-modal 
-    ref="errorDialog" 
+  <b-modal
+    ref="errorDialog"
     size="sm"
     hide-header
     hide-footer
@@ -11,7 +11,7 @@
     <div class="w-100 text-center d-flex">
       <div class="flex-fill">
         <div>登録に失敗しました</div>
-        <div> {{ errorMessage }}</div>
+        <div>{{ errorMessage }}</div>
       </div>
       <div>
         <b-button variant="light" @click="hideModal()">

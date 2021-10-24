@@ -1,7 +1,6 @@
-import firebase from '@/plugins/firebase';
-import 'firebase/auth';
-import 'firebase/firestore';
-const db = firebase.firestore();
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore';
 
 export const state = () => ({
   visionResp: null,
@@ -38,35 +37,37 @@ export const mutations = {
 };
 
 export const getters = {
-  visionResp: state => {
+  visionResp: (state) => {
     return state.visionResp;
   },
-  runResp: state => {
+  runResp: (state) => {
     return state.runResp;
   },
-  onCapturing: state => {
+  onCapturing: (state) => {
     return state.onCapturing;
   },
-  onRunning: state => {
+  onRunning: (state) => {
     return state.onRunning;
   },
-  user: state => {
+  user: (state) => {
     return state.user;
   },
-  runs: state => {
+  runs: (state) => {
     return state.runs;
   },
-  foods: state => {
+  foods: (state) => {
     return state.foods;
   }
 };
 
 export const actions = {
   async registRun({ dispatch }, run) {
+    const db = getFirestore();
     await db.collection('runs').add(run);
     await dispatch('fetchRuns', run);
   },
   async fetchRuns({ commit }, arg) {
+    const db = getFirestore();
     const snapshot = await db
       .collection('runs')
       .where('userId', '==', arg.userId)
@@ -74,7 +75,7 @@ export const actions = {
       .get();
     const retVal = [];
     if (!snapshot.empty) {
-      snapshot.docs.forEach(run => {
+      snapshot.docs.forEach((run) => {
         if (run.exists) {
           retVal.push({
             date: run.data().date.toDate(),
@@ -87,26 +88,29 @@ export const actions = {
     commit('runs', retVal);
   },
   async registFoods({ dispatch }, food) {
+    const db = getFirestore();
     await db.collection('meals').add(food);
     await dispatch('fetchFoods', food);
   },
   async registUser({ dispatch }, user) {
-    const response = await firebase
-      .auth()
-      .createUserWithEmailAndPassword(user.email, user.passwd);
-    return response.user;
+    const auth = getAuth();
+    const credential = await createUserWithEmailAndPassword(
+      auth,
+      user.email,
+      user.passwd
+    );
+    return credential.user;
   },
   async updateUser({ dispatch }, user) {
-    await db
-      .collection('users')
-      .doc(user.uid)
-      .set({
-        displayName: user.name,
-        height: user.height,
-        weight: user.weight
-      });
+    const db = getFirestore();
+    await db.collection('users').doc(user.uid).set({
+      displayName: user.name,
+      height: user.height,
+      weight: user.weight
+    });
   },
   async fetchFoods({ commit }, arg) {
+    const db = getFirestore();
     const snapshot = await db
       .collection('meals')
       .where('userId', '==', arg.userId)
@@ -114,7 +118,7 @@ export const actions = {
       .get();
     const retVal = [];
     if (!snapshot.empty) {
-      snapshot.docs.forEach(food => {
+      snapshot.docs.forEach((food) => {
         if (food.exists) {
           retVal.push({
             date: food.data().date.toDate(),
@@ -127,10 +131,8 @@ export const actions = {
     commit('foods', retVal);
   },
   async getCurrentUser(context, uid) {
-    const snapshot = await db
-      .collection('users')
-      .doc(uid)
-      .get();
+    const db = getFirestore();
+    const snapshot = await db.collection('users').doc(uid).get();
     let retVal = null;
     if (snapshot.exists) {
       retVal = {};
@@ -157,7 +159,7 @@ export const actions = {
   },
   async getRakutenWebSite(context, arg) {
     let query = '';
-    arg.keywords.forEach(keyword => {
+    arg.keywords.forEach((keyword) => {
       query += keyword + ' ';
     });
     const retVal = [];
@@ -169,7 +171,7 @@ export const actions = {
     const result = await this.$axios.$get(url);
     result.Items.forEach((site, index) => {
       retVal.push({
-        index: index,
+        index,
         name: site.Item.itemName,
         price: site.Item.itemPrice,
         url: site.Item.itemUrl,
@@ -206,9 +208,7 @@ export const actions = {
         }
       ]
     };
-    const url = `${process.env.GOOGLE_VISION_URL}?key=${
-      process.env.GOOGLE_VISION_SECRET
-    }`;
+    const url = `${process.env.GOOGLE_VISION_URL}?key=${process.env.GOOGLE_VISION_SECRET}`;
     return this.$axios.$post(url, data);
   }
 };

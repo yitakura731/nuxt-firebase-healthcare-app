@@ -8,9 +8,9 @@
 import HCUserProfile from '~/components/hc-user-profile.vue';
 
 export default {
-  layout: 'main',
   components: {
     'hc-user-profile': HCUserProfile
-  }
+  },
+  layout: 'main'
 };
 </script>

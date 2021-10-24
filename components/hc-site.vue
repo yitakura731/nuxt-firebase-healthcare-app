@@ -1,15 +1,15 @@
 <template>
-  <b-modal 
-    id="site-modal" 
+  <b-modal
+    id="site-modal"
     hide-header-close
     header-bg-variant="danger"
-    header-text-variant="white" 
-    ok-only 
-    scrollable 
+    header-text-variant="white"
+    ok-only
+    scrollable
     ok-variant="secondary"
     ok-title="閉じる"
   >
-    <template v-slot:modal-title>
+    <template #modal-title>
       <font-awesome-icon :icon="['fas', 'registered']" />
       <span>楽天検索</span>
       <span class="ml-2">{{ calorie }} kcal の商品</span>
@@ -29,7 +29,8 @@
       {{ error }}
     </b-alert>
   </b-modal>
-</template>>
+</template>
+>
 
 <script>
 import { mapActions } from 'vuex';
@@ -60,10 +61,10 @@ export default {
     };
   },
   watch: {
-    calorie(newVal, oldVal) {
+    calorie() {
       this.fetchCarolie();
     },
-    selected(newVal, oldVal) {
+    selected() {
       this.fetchCarolie();
     }
   },
@@ -79,10 +80,10 @@ export default {
           keywords,
           category: this.selected
         })
-          .then(sites => {
+          .then((sites) => {
             this.sites = sites;
           })
-          .catch(err => {
+          .catch((err) => {
             if (
               err.response != null &&
               err.response.data != null &&
@@ -97,4 +98,5 @@ export default {
     }
   }
 };
-</script>>
+</script>
+>

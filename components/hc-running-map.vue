@@ -3,9 +3,7 @@
     <div class="d-flex">
       <div class="flex-fill">
         <div class="w-100 text-center">
-          <small class="mb-0">
-            時間
-          </small>
+          <small class="mb-0"> 時間 </small>
         </div>
         <div class="w-100 text-center">
           <h2 class="mb-0">
@@ -15,9 +13,7 @@
       </div>
       <div class="flex-fill">
         <div class="w-100 text-center">
-          <small class="mb-0">
-            距離(km)
-          </small>
+          <small class="mb-0"> 距離(km) </small>
         </div>
         <div class="w-100 text-center">
           <h2 class="mb-0">
@@ -29,7 +25,7 @@
     <div class="d-flex flex-column align-items-center">
       <GmapMap
         ref="gmap"
-        :center="{lat:10, lng:10}"
+        :center="{ lat: 10, lng: 10 }"
         :zoom="16"
         :options="{
           zoomControl: true,
@@ -41,15 +37,16 @@
           disableDefaultUi: false
         }"
         map-type-id="terrain"
-        :style="mapStyle "
+        :style="mapStyle"
       >
         <GmapMarker :position="location" :icon="icon" />
-        <gmap-polyline 
-          v-if="paths.length > 0" 
-          :path.sync="paths" 
+        <gmap-polyline
+          v-if="paths.length > 0"
+          :path.sync="paths"
           :options="{
-            'strokeColor': '#4169e1',
-            'strokeWeight': 10}"
+            strokeColor: '#4169e1',
+            strokeWeight: 10
+          }"
         />
       </GmapMap>
     </div>
@@ -58,8 +55,7 @@
 
 <script>
 import { mapGetters, mapMutations, mapActions } from 'vuex';
-import firebase from 'firebase/app';
-import 'firebase/auth';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 export default {
   data() {
@@ -124,19 +120,16 @@ export default {
       }
     }
   },
-  mounted() {
+  async mounted() {
     navigator.geolocation.watchPosition(
       this.successPosition,
       this.errorPosition,
       { enableHighAccuracy: true }
     );
-    firebase.auth().onAuthStateChanged(user => {
-      if (user) {
-        this.getCurrentUser(user.uid).then(user => {
-          this.userWeight = user.weight;
-        });
-      }
-    });
+    const auth = getAuth();
+    const response = await onAuthStateChanged(auth);
+    const user = this.getCurrentUser(response.uid);
+    this.userWeight = user.weight;
   },
   methods: {
     ...mapMutations('webapi', ['runResp']),
@@ -147,7 +140,7 @@ export default {
       this.location.lat = lat - 0.00015;
       this.location.lng = lng;
       if (this.$refs.gmap) {
-        this.$refs.gmap.$mapPromise.then(map => {
+        this.$refs.gmap.$mapPromise.then((map) => {
           map.panTo(this.location);
           if (this.onRunning === 'RUNNING') {
             this.paths.push({ lat, lng });

@@ -1,10 +1,8 @@
 <template>
   <div class="hc-header d-flex justify-content-center align-items-center">
     <div class="d-flex flex-grow-1 justify-content-center align-items-center">
-      <img src="~/static/icon.png" width="30px" height="30px" class="mr-2">
-      <div class="pt-1">
-        HC Demo App
-      </div>
+      <img src="~/static/icon.png" width="30px" height="30px" class="mr-2" />
+      <div class="pt-1">HC Demo App</div>
     </div>
   </div>
 </template>

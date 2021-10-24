@@ -10,7 +10,7 @@ export default {
     }
   },
   watch: {
-    data(newVal, oldVal) {
+    data() {
       this.render();
     }
   },
@@ -33,7 +33,7 @@ export default {
         });
         keyDay.subtract(7, 'd');
       }
-      this.data.forEach(elem => {
+      this.data.forEach((elem) => {
         const runDate = this.$moment(elem.date);
         for (let index = 0; index < dataMap.length; index++) {
           if (runDate.isAfter(dataMap[index].key)) {
@@ -44,11 +44,11 @@ export default {
       });
       dataMap = dataMap.reverse();
       const chartData = {
-        labels: dataMap.map(elem => elem.key.format('YYYY / MM / DD')),
+        labels: dataMap.map((elem) => elem.key.format('YYYY / MM / DD')),
         datasets: [
           {
             label: 'Bar Dataset',
-            data: dataMap.map(elem => elem.value),
+            data: dataMap.map((elem) => elem.value),
             backgroundColor: 'rgba(75,192,192,0.4)'
           }
         ]

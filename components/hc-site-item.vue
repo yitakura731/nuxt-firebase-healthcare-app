@@ -2,15 +2,13 @@
   <a
     class="d-flex justify-content-center align-items-center border mb-2 p-2"
     :href="site.itemURL"
-  > 
+  >
     <b-img :src="site.imageURL[0].imageUrl" height="128px" class="pr-2" />
     <div>
       <p class="site-name m-0">
         {{ site.name }}
       </p>
-      <p class="site-price text-danger m-0">
-        {{ site.price }} 円
-      </p>
+      <p class="site-price text-danger m-0">{{ site.price }} 円</p>
     </div>
   </a>
 </template>
@@ -37,4 +35,5 @@ export default {
 .site-price {
   font-size: 24px;
 }
-</style>>
+</style>
+>

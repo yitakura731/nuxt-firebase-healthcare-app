@@ -1,11 +1,5 @@
 <template>
-  <b-modal 
-    ref="successDialog" 
-    size="sm"
-    hide-header
-    hide-footer
-    centered
-  >
+  <b-modal ref="successDialog" size="sm" hide-header hide-footer centered>
     <div class="w-100 text-center text-success">
       <a>登録に成功しました</a>
     </div>

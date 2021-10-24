@@ -14,7 +14,7 @@
         kcal
       </div>
     </div>
-    <hr class="my-1">
+    <hr class="my-1" />
   </div>
 </template>
 

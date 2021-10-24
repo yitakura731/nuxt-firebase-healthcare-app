@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="d-flex p-1 my-1 py-1"> 
+    <div class="d-flex p-1 my-1 py-1">
       <div class="flex-fill text-center mt-2 mb-0">
         {{ toFormatDate(run.date) }}
       </div>
@@ -17,7 +17,7 @@
         kcal
       </div>
     </div>
-    <hr class="my-1">
+    <hr class="my-1" />
   </div>
 </template>
 

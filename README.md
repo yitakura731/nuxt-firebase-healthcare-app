@@ -2,7 +2,7 @@
 
 ## 1. Overview
 
-This is a health care application for my study. This application provides a meal and excercise support service. The demo site of this application is below.  
+This is a health care application for my own study. This application provides a meal and excercise support service. The demo site of this application is below.  
 https://hc-demo-app-01.herokuapp.com/
 
 ### 1.1 Meal management

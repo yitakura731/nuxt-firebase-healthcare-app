@@ -3,22 +3,22 @@
     <div class="mt-1 position-relative">
       <hc-running-map />
       <div class="running-btn position-absolute">
-        <b-button 
+        <b-button
           v-if="onRunning !== 'RUNNING'"
           pill
           size="lg"
           variant="primary"
-          class="flex-fill border-0" 
+          class="flex-fill border-0"
           @click="startRun()"
         >
           <font-awesome-icon :icon="['fas', 'play']" />
         </b-button>
-        <b-button 
+        <b-button
           v-if="onRunning === 'RUNNING'"
           pill
           size="lg"
-          variant="warning" 
-          class="flex-fill border-0" 
+          variant="warning"
+          class="flex-fill border-0"
           @click="pendingRun()"
         >
           <font-awesome-icon :icon="['fas', 'pause']" />
@@ -26,24 +26,20 @@
       </div>
     </div>
     <div class="flex-fill border rounded bg-light h-100 m-1">
-      <div 
+      <div
         v-if="onRunning === 'STOP'"
-        class="d-flex justify-content-center align-items-center h-100" 
+        class="d-flex justify-content-center align-items-center h-100"
       >
-        <div>
-          ランニングを開始してください
-        </div>
+        <div>ランニングを開始してください</div>
       </div>
-      <div 
+      <div
         v-else-if="onRunning === 'PENDING' && runResp != null"
         class="d-flex flex-column h-100"
       >
         <div class="d-flex flex-fill align-items-center">
           <div class="flex-fill">
             <div class="w-100 text-center">
-              <small class="mb-0">
-                走行距離(km)
-              </small>
+              <small class="mb-0"> 走行距離(km) </small>
             </div>
             <div class="w-100 text-center">
               <h2 class="mb-0">
@@ -53,9 +49,7 @@
           </div>
           <div class="flex-fill">
             <div class="w-100 text-center">
-              <small class="mb-0">
-                消費カロリー(kcal)
-              </small>
+              <small class="mb-0"> 消費カロリー(kcal) </small>
             </div>
             <div class="w-100 text-center">
               <h2 class="mb-0">
@@ -65,26 +59,22 @@
           </div>
         </div>
         <div class="d-flex">
-          <b-button
-            v-b-modal.site-modal 
-            variant="danger"
-            class="flex-fill m-1"
-          >
+          <b-button v-b-modal.site-modal variant="danger" class="flex-fill m-1">
             <font-awesome-icon :icon="['fas', 'registered']" />
             <a>楽天</a>
           </b-button>
-          <b-button 
-            :disabled="onRegist !== 'none'" 
+          <b-button
+            :disabled="onRegist !== 'none'"
             variant="success"
-            class="flex-fill m-1" 
+            class="flex-fill m-1"
             @click="storeRun()"
           >
             <font-awesome-icon :icon="['fas', 'cloud-upload-alt']" />
             <a>登録</a>
           </b-button>
-          <b-button 
-            variant="secondary" 
-            class="flex-fill m-1" 
+          <b-button
+            variant="secondary"
+            class="flex-fill m-1"
             @click="stopRun()"
           >
             <font-awesome-icon :icon="['fas', 'stop-circle']" />
@@ -94,7 +84,7 @@
       </div>
       <div
         v-else
-        class="d-flex justify-content-center align-items-center h-100" 
+        class="d-flex justify-content-center align-items-center h-100"
       >
         <font-awesome-icon :icon="['fas', 'running']" class="mr-2" />
         ランニング中
@@ -167,7 +157,7 @@ export default {
         .then(() => {
           this.onRegist = 'success';
           this.$refs.successModal.showModal();
-          return new Promise(resolve => {
+          return new Promise((resolve) => {
             setTimeout(() => {
               resolve();
             }, 2000);
@@ -178,7 +168,7 @@ export default {
           this.commitOnRunning('STOP');
           this.$refs.successModal.hideModal();
         })
-        .catch(err => {
+        .catch((err) => {
           this.onRegist = 'error';
           this.$refs.errorModal.showModal(err, () => {
             this.onRegist = 'none';

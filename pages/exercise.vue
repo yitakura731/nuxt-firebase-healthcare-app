@@ -1,28 +1,28 @@
 <template>
   <div class="d-flex flex-column">
     <b-button-group class="py-1 px-4 hc-meal-tabs">
-      <b-button 
-        variant="primary" 
-        class="px-0" 
-        :pressed="target==='running'"
+      <b-button
+        variant="primary"
+        class="px-0"
+        :pressed="target === 'running'"
         @click="setTarget('running')"
       >
         <font-awesome-icon :icon="['fas', 'running']" />
         <a class="ml-1">ランニング</a>
       </b-button>
-      <b-button 
-        variant="primary" 
-        :pressed="target==='history'"
+      <b-button
+        variant="primary"
+        :pressed="target === 'history'"
         @click="setTarget('history')"
       >
         <font-awesome-icon :icon="['fas', 'chart-bar']" />
         <a class="ml-1">履歴</a>
       </b-button>
     </b-button-group>
-    <div v-show="target==='running'" class="flex-grow-1">
+    <div v-show="target === 'running'" class="flex-grow-1">
       <hc-running />
     </div>
-    <div v-show="target==='history'" class="flex-grow-1">
+    <div v-show="target === 'history'" class="flex-grow-1">
       <hc-running-history />
     </div>
   </div>
@@ -33,11 +33,11 @@ import HCRunning from '~/components/hc-running.vue';
 import HcRunningHistory from '~/components/hc-running-history.vue';
 
 export default {
-  layout: 'main',
   components: {
     'hc-running': HCRunning,
     'hc-running-history': HcRunningHistory
   },
+  layout: 'main',
   data() {
     return {
       target: 'running'

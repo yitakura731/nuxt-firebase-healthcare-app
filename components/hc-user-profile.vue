@@ -1,10 +1,10 @@
 <template>
   <div>
-    <b-img 
+    <b-img
       center
-      src="@/static/user.png" 
+      src="@/static/user.png"
       width="196px"
-      height="196px" 
+      height="196px"
       alt="User image"
       class="mt-3"
     />
@@ -15,26 +15,19 @@
     </div>
     <div class="w-100 p-3">
       <div class="border-bottom d-flex">
-        <h5 class="flex-fill pl-2">
-          身長
-        </h5>
-        <h5 class="pr-2">
-          {{ height }} cm
-        </h5>
+        <h5 class="flex-fill pl-2">身長</h5>
+        <h5 class="pr-2">{{ height }} cm</h5>
       </div>
     </div>
     <div class="w-100 p-3">
       <div class="border-bottom d-flex">
-        <h5 class="flex-fill pl-2">
-          体重
-        </h5>
-        <h5 class="pr-2">
-          {{ weight }} kg
-        </h5>
+        <h5 class="flex-fill pl-2">体重</h5>
+        <h5 class="pr-2">{{ weight }} kg</h5>
       </div>
     </div>
   </div>
-</template>>
+</template>
+>
 
 <script>
 import { mapGetters, mapActions } from 'vuex';
@@ -52,7 +45,7 @@ export default {
     ...mapGetters('webapi', ['user'])
   },
   mounted() {
-    this.getCurrentUser(this.user.uid).then(user => {
+    this.getCurrentUser(this.user.uid).then((user) => {
       this.name = user.name;
       this.height = user.height;
       this.weight = user.weight;
@@ -62,4 +55,5 @@ export default {
     ...mapActions('webapi', ['getCurrentUser'])
   }
 };
-</script>>
+</script>
+>

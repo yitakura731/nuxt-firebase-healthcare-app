@@ -1,15 +1,15 @@
 <template>
-  <b-modal 
-    id="vision-detail-modal" 
+  <b-modal
+    id="vision-detail-modal"
     hide-header-close
     header-bg-variant="secondary"
-    header-text-variant="white" 
-    ok-only 
-    scrollable 
+    header-text-variant="white"
+    ok-only
+    scrollable
     ok-variant="secondary"
     ok-title="閉じる"
   >
-    <template v-slot:modal-title>
+    <template #modal-title>
       <font-awesome-icon :icon="['fas', 'glasses']" />
       物体検知結果
     </template>
@@ -18,7 +18,7 @@
         <a class="font-weight-bolder ml-2">物体検知</a>
         <div
           v-for="object in visionResp.objects"
-          :key="object.id" 
+          :key="object.id"
           class="border rounded bg-light p-2 mx-1 mt-1 mb-3"
         >
           {{ object.name }}
@@ -35,15 +35,15 @@
         />
       </div>
       <div v-else class="border rounded bg-light m-1 mb-3">
-        <div class="ml-1 p-2">
-          検知できません
-        </div>
+        <div class="ml-1 p-2">検知できません</div>
       </div>
       <a class="font-weight-bolder ml-2">テキスト抽出</a>
       <div class="border rounded bg-light m-1 p-2">
         <div
-          v-if="visionResp.hitwords.validWords.length > 0 || 
-            visionResp.hitwords.inValidWords.length > 0"
+          v-if="
+            visionResp.hitwords.validWords.length > 0 ||
+            visionResp.hitwords.inValidWords.length > 0
+          "
         >
           <a class="font-weight-bolder ml-2">有効テキスト</a>
           <div class="border rounded bg-white text-info p-2 mb-2">
@@ -83,7 +83,7 @@ export default {
     validHitwords() {
       let retVal = '';
       if (this.visionResp.hitwords.validWords.length > 0) {
-        this.visionResp.hitwords.validWords.forEach(elem => {
+        this.visionResp.hitwords.validWords.forEach((elem) => {
           retVal += elem.text + ' ';
         });
       }
@@ -92,7 +92,7 @@ export default {
     inValidHitwords() {
       let retVal = '';
       if (this.visionResp.hitwords.inValidWords != null) {
-        this.visionResp.hitwords.inValidWords.forEach(elem => {
+        this.visionResp.hitwords.inValidWords.forEach((elem) => {
           retVal += elem.text + ' ';
         });
       }
@@ -102,11 +102,11 @@ export default {
   methods: {
     getDatasets() {
       return {
-        labels: this.visionResp.labels.map(elem => elem.name),
+        labels: this.visionResp.labels.map((elem) => elem.name),
         datasets: [
           {
             label: 'Bar Dataset',
-            data: this.visionResp.labels.map(elem => elem.score),
+            data: this.visionResp.labels.map((elem) => elem.score),
             backgroundColor: 'rgba(75,192,192,0.4)'
           }
         ]

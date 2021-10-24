@@ -13,7 +13,8 @@
       </div>
     </div>
   </div>
-</template>>
+</template>
+>
 
 <script>
 import { mapGetters, mapActions } from 'vuex';
@@ -42,7 +43,8 @@ export default {
     ...mapActions('webapi', ['fetchRuns'])
   }
 };
-</script>>
+</script>
+>
 
 <style scoped>
 .histroy-area {
