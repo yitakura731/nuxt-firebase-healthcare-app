@@ -36,6 +36,7 @@
             variant="danger"
             class="mt-1 text-center"
             dismissible
+            @dismissed="onDismissed"
           >
             {{ error }}
           </b-alert>
@@ -87,7 +88,6 @@
 
 <script>
 import { mapMutations, mapActions } from 'vuex';
-import Cookies from 'js-cookie';
 import {
   getAuth,
   signInWithEmailAndPassword,
@@ -118,15 +118,15 @@ export default {
       const password = this.password;
       try {
         const auth = getAuth();
-        const credential = signInWithEmailAndPassword(auth, email, password);
-        const token = await credential.getIdToken(true);
-        this.commitUser({ uid: resp.user.uid });
-        Cookies.set('__session', token);
+        const credential = await signInWithEmailAndPassword(
+          auth,
+          email,
+          password
+        );
+        this.commitUser({ uid: credential.user.uid });
         this.$router.push('/meal');
       } catch (error) {
-        Cookies.remove('__session');
         this.commitUser(null);
-        firebase.auth().signOut();
         this.error = error;
       }
     },
@@ -140,11 +140,9 @@ export default {
         } else if (providerType === 'Github') {
           credential = GithubAuthProvider.credentialFromResult(result);
         }
-        const user = result.user;
+        const user = credential.user;
         if (user) {
-          const token = credential.accessToken;
           this.commitUser({ uid: resp.user.uid });
-          Cookies.set('__session', token);
           this.$router.push('/meal');
         } else {
           this.$refs.accountModal.showModal({
@@ -153,9 +151,7 @@ export default {
           });
         }
       } catch (error) {
-        Cookies.remove('__session');
         this.commitUser(null);
-        firebase.auth().signOut();
         this.error = error;
       }
     },
@@ -164,6 +160,9 @@ export default {
         mode: 'local',
         email: null
       });
+    },
+    onDismissed() {
+      this.error = null;
     }
   }
 };

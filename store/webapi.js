@@ -1,6 +1,15 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
+import {
+  getFirestore,
+  addDoc,
+  getDoc,
+  doc,
+  query,
+  collection,
+  where,
+  orderBy
+} from 'firebase/firestore';
 
 export const state = () => ({
   visionResp: null,
@@ -62,17 +71,29 @@ export const getters = {
 
 export const actions = {
   async registRun({ dispatch }, run) {
-    const db = getFirestore();
     await db.collection('runs').add(run);
     await dispatch('fetchRuns', run);
   },
+  async getCurrentUser(context, uid) {
+    const docRef = doc(getFirestore(), 'users', uid);
+    const snapshot = await getDoc(docRef);
+    let retVal = null;
+    if (snapshot.exists) {
+      retVal = {};
+      retVal.id = uid;
+      retVal.name = snapshot.data().displayName;
+      retVal.height = snapshot.data().height;
+      retVal.weight = snapshot.data().weight;
+    }
+    return retVal;
+  },
   async fetchRuns({ commit }, arg) {
-    const db = getFirestore();
-    const snapshot = await db
-      .collection('runs')
-      .where('userId', '==', arg.userId)
-      .orderBy('date', 'desc')
-      .get();
+    const q = await query(
+      collection(getFirestore(), 'runs'),
+      where('userId', '==', arg.userId),
+      orderBy('date', 'desc')
+    );
+    const snapshot = await getDoc(q);
     const retVal = [];
     if (!snapshot.empty) {
       snapshot.docs.forEach((run) => {
@@ -87,35 +108,13 @@ export const actions = {
     }
     commit('runs', retVal);
   },
-  async registFoods({ dispatch }, food) {
-    const db = getFirestore();
-    await db.collection('meals').add(food);
-    await dispatch('fetchFoods', food);
-  },
-  async registUser({ dispatch }, user) {
-    const auth = getAuth();
-    const credential = await createUserWithEmailAndPassword(
-      auth,
-      user.email,
-      user.passwd
-    );
-    return credential.user;
-  },
-  async updateUser({ dispatch }, user) {
-    const db = getFirestore();
-    await db.collection('users').doc(user.uid).set({
-      displayName: user.name,
-      height: user.height,
-      weight: user.weight
-    });
-  },
   async fetchFoods({ commit }, arg) {
-    const db = getFirestore();
-    const snapshot = await db
-      .collection('meals')
-      .where('userId', '==', arg.userId)
-      .orderBy('date', 'desc')
-      .get();
+    const q = await query(
+      collection(getFirestore(), 'meals'),
+      where('userId', '==', arg.userId),
+      orderBy('date', 'desc')
+    );
+    const snapshot = await getDoc(q);
     const retVal = [];
     if (!snapshot.empty) {
       snapshot.docs.forEach((food) => {
@@ -130,18 +129,24 @@ export const actions = {
     }
     commit('foods', retVal);
   },
-  async getCurrentUser(context, uid) {
-    const db = getFirestore();
-    const snapshot = await db.collection('users').doc(uid).get();
-    let retVal = null;
-    if (snapshot.exists) {
-      retVal = {};
-      retVal.id = uid;
-      retVal.name = snapshot.data().displayName;
-      retVal.height = snapshot.data().height;
-      retVal.weight = snapshot.data().weight;
-    }
-    return retVal;
+  async registFoods({ dispatch }, food) {
+    await addDoc(collection(getFirestore(), 'meals'));
+    await dispatch('fetchFoods', food);
+  },
+  async registUser({ dispatch }, user) {
+    const credential = await createUserWithEmailAndPassword(
+      getAuth(),
+      user.email,
+      user.passwd
+    );
+    return credential.user;
+  },
+  async updateUser({ dispatch }, user) {
+    await db.collection('users').doc(user.uid).set({
+      displayName: user.name,
+      height: user.height,
+      weight: user.weight
+    });
   },
   getCalorie(context, keyword) {
     return this.$axios({
