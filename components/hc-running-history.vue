@@ -36,8 +36,12 @@ export default {
       }
     }
   },
-  mounted() {
-    this.fetchRuns({ userId: this.user.uid });
+  watch: {
+    user(newVal) {
+      if (newVal) {
+        this.fetchRuns({ userId: newVal.uid });
+      }
+    }
   },
   methods: {
     ...mapActions('webapi', ['fetchRuns'])

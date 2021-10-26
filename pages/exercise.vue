@@ -7,16 +7,20 @@
         :pressed="target === 'running'"
         @click="setTarget('running')"
       >
-        <font-awesome-icon :icon="['fas', 'running']" />
-        <a class="ml-1">ランニング</a>
+        <div class="d-flex justify-content-center align-items-center">
+          <font-awesome-icon :icon="['fas', 'running']" />
+          <div class="text-white">ランニング</div>
+        </div>
       </b-button>
       <b-button
         variant="primary"
         :pressed="target === 'history'"
         @click="setTarget('history')"
       >
-        <font-awesome-icon :icon="['fas', 'chart-bar']" />
-        <a class="ml-1">履歴</a>
+        <div class="d-flex justify-content-center align-items-center">
+          <font-awesome-icon :icon="['fas', 'chart-bar']" />
+          <div class="text-white">履歴</div>
+        </div>
       </b-button>
     </b-button-group>
     <div v-show="target === 'running'" class="flex-grow-1">

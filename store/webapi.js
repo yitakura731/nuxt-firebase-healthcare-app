@@ -4,6 +4,7 @@ import {
   getFirestore,
   addDoc,
   getDoc,
+  getDocs,
   doc,
   query,
   collection,
@@ -93,7 +94,7 @@ export const actions = {
       where('userId', '==', arg.userId),
       orderBy('date', 'desc')
     );
-    const snapshot = await getDoc(q);
+    const snapshot = await getDocs(q);
     const retVal = [];
     if (!snapshot.empty) {
       snapshot.docs.forEach((run) => {
@@ -114,7 +115,7 @@ export const actions = {
       where('userId', '==', arg.userId),
       orderBy('date', 'desc')
     );
-    const snapshot = await getDoc(q);
+    const snapshot = await getDocs(q);
     const retVal = [];
     if (!snapshot.empty) {
       snapshot.docs.forEach((food) => {

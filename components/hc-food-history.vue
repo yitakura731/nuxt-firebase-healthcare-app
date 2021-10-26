@@ -36,8 +36,12 @@ export default {
       }
     }
   },
-  mounted() {
-    this.fetchFoods({ userId: this.user.uid });
+  watch: {
+    user(newVal) {
+      if (newVal) {
+        this.fetchFoods({ userId: this.user.uid });
+      }
+    }
   },
   methods: {
     ...mapActions('webapi', ['fetchFoods'])

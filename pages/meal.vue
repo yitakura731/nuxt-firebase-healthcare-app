@@ -7,9 +7,10 @@
         :pressed="target === 'camera'"
         @click="setTarget('camera')"
       >
-        <font-awesome-icon :icon="['fas', 'camera']" />
-
-        <a class="ml-1">カロリー計測</a>
+        <div class="d-flex justify-content-center align-items-center">
+          <font-awesome-icon :icon="['fas', 'camera']" class="mr-2" />
+          <div class="text-white">カロリー計測</div>
+        </div>
       </b-button>
 
       <b-button
@@ -17,9 +18,10 @@
         :pressed="target === 'history'"
         @click="setTarget('history')"
       >
-        <font-awesome-icon :icon="['fas', 'chart-bar']" />
-
-        <a class="ml-1">履歴</a>
+        <div class="d-flex justify-content-center align-items-center">
+          <font-awesome-icon :icon="['fas', 'chart-bar']" />
+          <div class="ml-1 text-white">履歴</div>
+        </div>
       </b-button>
     </b-button-group>
 

@@ -120,16 +120,17 @@ export default {
       }
     }
   },
-  async mounted() {
+  mounted() {
     navigator.geolocation.watchPosition(
       this.successPosition,
       this.errorPosition,
       { enableHighAccuracy: true }
     );
     const auth = getAuth();
-    const response = await onAuthStateChanged(auth);
-    const user = this.getCurrentUser(response.uid);
-    this.userWeight = user.weight;
+    onAuthStateChanged(auth, (response) => {
+      const user = this.getCurrentUser(response.uid);
+      this.userWeight = user.weight;
+    });
   },
   methods: {
     ...mapMutations('webapi', ['runResp']),
