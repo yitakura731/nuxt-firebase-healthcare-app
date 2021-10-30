@@ -2,35 +2,36 @@
 
 ## 1. Overview
 
-This is a health care application for my own study. This application provides a meal and excercise support service. The demo site of this application is below.  
-https://hc-demo-app-01.herokuapp.com/
+学習用に作成した PWA です。下記の機能を提供しています。
 
-### 1.1 Meal management
+### 1. 食事管理
 
-You can record the calories of the meal you eat by capturing with a camera.
+- カメラで食品の画像を撮影すると、そのカロリーがわかります。
 
 <img src="capture/meal.png" width="200">
 
 ### 1.2 Excercise management
 
-This application supports your runnning habit. You can track your total running distance and calories burned. 
+- ランニングした距離と時間を計測できます。
+-
 
 <img src="capture/running.jpg" width="200">
 
 ### 1.3 Singin/Signout
 
-This application provides user/password and social login authentication.
+- ユーザー/パスワードによるログイン以外に、Google と Github のアカウントでのログインも可能です
 
 <img src="capture/login.png" width="200">
 
 ## 2. Architecure
 
+<img src="capture/architect.jpg" width="400">
+
 ### 2.1 Frontend
 
-* Use Vue/Nuxt(SSR) for view framework.
+- Nuxt/Vue2 の SPA として実装しています。
 
 ### 2.2 Backend
 
-* Use Firebase for database and authentication platform.
-* Use Google vision api for object detection api.
-
+- Firebase の認証機能(Authentication)やデータストア(Firestore)を利用しています。
+- 画像の物体検知は Google の VisionAPI を利用しています。
