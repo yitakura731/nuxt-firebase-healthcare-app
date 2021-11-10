@@ -21,7 +21,7 @@ console.log(`F_MESURE_ID = ${process.env.FIREBASE_MESURE_ID}`);
 
 module.exports = {
   ssr: false,
-
+  target: 'static',
   router: {
     middleware: 'auth'
   },
